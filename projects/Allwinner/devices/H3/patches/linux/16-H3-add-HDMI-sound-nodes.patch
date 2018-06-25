@@ -9,7 +9,7 @@ index 8aa2befc..d3d70eac 100644
 +	sound_hdmi: sound {
 +		compatible = "simple-audio-card";
 +		simple-audio-card,format = "i2s";
-+		simple-audio-card,name = "allwinner,hdmi";
++		simple-audio-card,name = "allwinner-hdmi";
 +		simple-audio-card,mclk-fs = <256>;
 +		status = "disabled";
 +
