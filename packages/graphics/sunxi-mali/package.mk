@@ -1,29 +1,14 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016 Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="sunxi-mali"
-PKG_VERSION="3d7f4d4"
-PKG_SHA256="ef5f0f2c0545d1a20d283b87aa447f452e353150cdffadc7f405559e42626cb8"
+PKG_VERSION="d691cb93884ca8ac67860502117bbec283dc19aa"
+PKG_SHA256="72969ecf470b9e5ce787c2f8f36242926e1e892af0891924ee59a2cd206de39f"
 PKG_ARCH="arm"
 PKG_LICENSE="nonfree"
-PKG_SITE="https://github.com/linux-sunxi/sunxi-mali"
-PKG_URL="https://github.com/mosajjal/r6p2/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="r6p2-$PKG_VERSION*"
+PKG_SITE="https://github.com/bootlin/mali-blobs"
+PKG_URL="https://github.com/bootlin/mali-blobs/archive/$PKG_VERSION.tar.gz"
+PKG_SOURCE_DIR="mali-blobs-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain libdrm wayland"
 PKG_SECTION="graphics"
 PKG_SHORTDESC="Sunxi Mali-400 support libraries"
@@ -32,12 +17,12 @@ PKG_TOOLCHAIN="manual"
 
 makeinstall_target() {
   mkdir -p $SYSROOT_PREFIX/usr/include/
-    cp -av fbdev/include/* $SYSROOT_PREFIX/usr/include
+    cp -av include/wayland/* $SYSROOT_PREFIX/usr/include
 
   mkdir -p $SYSROOT_PREFIX/usr/lib/pkgconfig
     cp -PRv $PKG_DIR/pkgconfig/*.pc $SYSROOT_PREFIX/usr/lib/pkgconfig
 
-  MALI="libwayland_for_mali/h3/lib_wayland/libMali.so"
+  MALI="r6p2/arm/wayland/libMali.so"
 
   mkdir -p $SYSROOT_PREFIX/usr/lib/
     cp -v $MALI $SYSROOT_PREFIX/usr/lib
