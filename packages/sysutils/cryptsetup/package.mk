@@ -1,7 +1,10 @@
 # Made by github.com/escalade and slightly changed by sky42
 #
+# dont update the version, the old version is intentional
+#
 PKG_NAME="cryptsetup"
 PKG_VERSION="1.7.5"
+PKG_SHA256="2b30cd1d0dd606a53ac77b406e1d37798d4b0762fa89de6ea546201906a251bd"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://gitlab.com/cryptsetup/cryptsetup"

@@ -1,6 +1,9 @@
 #
+# dont update the version, the old one is intetional
+#
 PKG_NAME="lvm2-minimal"
 PKG_VERSION="2.02.177"
+PKG_SHA256="4025a23ec9b15c2cb7486d151c29dc953b75efc4d452cfe9dbbc7c0fac8e80f2"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv2 LGPL2.1"
 PKG_SITE="https://sourceware.org/lvm2"
