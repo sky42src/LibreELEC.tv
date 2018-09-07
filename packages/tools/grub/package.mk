@@ -16,6 +16,7 @@ PKG_TOOLCHAIN="configure"
 
 PKG_CONFIGURE_OPTS_TARGET="--target=i386-pc-linux \
                            --disable-nls \
+                           --disable-device-mapper \
                            --with-platform=efi"
 
   unset CFLAGS
