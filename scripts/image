@@ -47,7 +47,11 @@ ORIGIN_URL="$(git remote -v | awk '$1 == "origin" { print $2 }' | head -1 | sed 
 if [ "$OFFICIAL" = "yes" ]; then
   LIBREELEC_BUILD="official"
 else
-  LIBREELEC_BUILD="community"
+  if [ -z "$BUILDER_NAME" ] ; then
+    LIBREELEC_BUILD="community"
+  else
+    LIBREELEC_BUILD="$BUILDER_NAME"
+  fi
 fi
 
 if [ -n "$CUSTOM_VERSION" ]; then
