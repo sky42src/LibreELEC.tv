@@ -21,7 +21,7 @@ PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.kernel.org"
 PKG_DEPENDS_HOST="ccache:host"
-PKG_DEPENDS_TARGET="toolchain cpio:host kmod:host pciutils xz:host wireless-regdb keyutils"
+PKG_DEPENDS_TARGET="toolchain cpio:host kmod:host pciutils xz:host wireless-regdb keyutils openssl"
 PKG_DEPENDS_INIT="toolchain"
 PKG_NEED_UNPACK="$LINUX_DEPENDS"
 PKG_SECTION="linux"
@@ -64,7 +64,7 @@ case "$LINUX" in
     PKG_PATCH_DIRS="default-rpi"
     ;;
   *)
-    PKG_VERSION="4.11.12"
+    PKG_VERSION="4.18.5"
     PKG_URL="http://www.kernel.org/pub/linux/kernel/v4.x/$PKG_NAME-$PKG_VERSION.tar.xz"
     PKG_PATCH_DIRS="default"
     ;;
@@ -73,10 +73,8 @@ esac
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-PKG_MAKE_OPTS_HOST="ARCH=$TARGET_KERNEL_ARCH headers_check"
-
 if [ "$TARGET_ARCH" = "x86_64" ]; then
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET intel-ucode:host kernel-firmware"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET intel-ucode:host kernel-firmware elfutils:host"
 fi
 
 if [ "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
@@ -97,12 +95,6 @@ post_patch() {
   else
     KERNEL_CFG_FILE=$PKG_DIR/config/$PKG_NAME.$TARGET_ARCH.conf
   fi
-
-  sed -i -e "s|^HOSTCC[[:space:]]*=.*$|HOSTCC = $TOOLCHAIN/bin/host-gcc|" \
-         -e "s|^HOSTCXX[[:space:]]*=.*$|HOSTCXX = $TOOLCHAIN/bin/host-g++|" \
-         -e "s|^ARCH[[:space:]]*?=.*$|ARCH = $TARGET_KERNEL_ARCH|" \
-         -e "s|^CROSS_COMPILE[[:space:]]*?=.*$|CROSS_COMPILE = $TARGET_PREFIX|" \
-         $PKG_BUILD/Makefile
 
   cp $KERNEL_CFG_FILE $PKG_BUILD/.config
   if [ ! "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
@@ -147,8 +139,27 @@ post_patch() {
   fi
 }
 
+make_host() {
+  make \
+    ARCH=${HEADERS_ARCH:-$TARGET_KERNEL_ARCH} \
+    HOSTCC="$TOOLCHAIN/bin/host-gcc" \
+    HOSTCXX="$TOOLCHAIN/bin/host-g++" \
+    HOSTCFLAGS="$HOST_CFLAGS" \
+    HOSTCXXFLAGS="$HOST_CXXFLAGS" \
+    HOSTLDFLAGS="$HOST_LDFLAGS" \
+    headers_check
+}
+
 makeinstall_host() {
-  make ARCH=$TARGET_KERNEL_ARCH INSTALL_HDR_PATH=dest headers_install
+  make \
+    ARCH=${HEADERS_ARCH:-$TARGET_KERNEL_ARCH} \
+    HOSTCC="$TOOLCHAIN/bin/host-gcc" \
+    HOSTCXX="$TOOLCHAIN/bin/host-g++" \
+    HOSTCFLAGS="$HOST_CFLAGS" \
+    HOSTCXXFLAGS="$HOST_CXXFLAGS" \
+    HOSTLDFLAGS="$HOST_LDFLAGS" \
+    INSTALL_HDR_PATH=dest \
+    headers_install
   mkdir -p $SYSROOT_PREFIX/usr/include
     cp -R dest/include/* $SYSROOT_PREFIX/usr/include
 }
@@ -165,10 +176,12 @@ pre_make_target() {
     sed -i "s|CONFIG_EXTRA_FIRMWARE=.*|CONFIG_EXTRA_FIRMWARE=\"${FW_LIST}\"|" $PKG_BUILD/.config
   fi
 
-  make oldconfig
+  kernel_make oldconfig
 
-  # regdb
-  cp $(get_build_dir wireless-regdb)/db.txt $PKG_BUILD/net/wireless/db.txt
+  # regdb (backward compatability with pre-4.15 kernels)
+  if grep -q ^CONFIG_CFG80211_INTERNAL_REGDB= $PKG_BUILD/.config ; then
+    cp $(get_build_dir wireless-regdb)/db.txt $PKG_BUILD/net/wireless/db.txt
+  fi
 
   if [ "$BOOTLOADER" = "u-boot" ]; then
     ( cd $ROOT
@@ -178,8 +191,8 @@ pre_make_target() {
 }
 
 make_target() {
-  LDFLAGS="" make modules
-  LDFLAGS="" make INSTALL_MOD_PATH=$INSTALL/usr DEPMOD="$TOOLCHAIN/bin/depmod" modules_install
+  kernel_make modules
+  kernel_make INSTALL_MOD_PATH=$INSTALL/usr DEPMOD="$TOOLCHAIN/bin/depmod" modules_install
   rm -f $INSTALL/usr/lib/modules/*/build
   rm -f $INSTALL/usr/lib/modules/*/source
 
@@ -190,11 +203,11 @@ make_target() {
 
   if [ "$BOOTLOADER" = "u-boot" -a -n "$KERNEL_UBOOT_EXTRA_TARGET" ]; then
     for extra_target in "$KERNEL_UBOOT_EXTRA_TARGET"; do
-      LDFLAGS="" make $extra_target
+      kernel_make $extra_target
     done
   fi
 
-  LDFLAGS="" make $KERNEL_TARGET $KERNEL_MAKE_EXTRACMD
+  kernel_make $KERNEL_TARGET $KERNEL_MAKE_EXTRACMD
 
   if [ "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
     LDFLAGS="" mkbootimg --kernel arch/$TARGET_KERNEL_ARCH/boot/$KERNEL_TARGET --ramdisk $BUILD/image/initramfs.cpio \
@@ -253,4 +266,10 @@ post_install() {
 
   # bluez looks in /etc/firmware/
     ln -sf /usr/lib/firmware/ $INSTALL/etc/firmware
+
+  # regdb and signature is now loaded as firmware by 4.15+
+    if grep -q ^CONFIG_CFG80211_REQUIRE_SIGNED_REGDB= $PKG_BUILD/.config; then
+      cp $(get_build_dir wireless-regdb)/regulatory.db{,.p7s} $INSTALL/usr/lib/firmware
+    fi
+
 }

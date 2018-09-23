@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="mesa"
-PKG_VERSION="17.1.3"
+PKG_VERSION="18.0.5"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.mesa3d.org/"
@@ -86,7 +86,7 @@ PKG_CONFIGURE_OPTS_TARGET="CC_FOR_BUILD=$HOST_CC \
                            --disable-nine \
                            --disable-xvmc \
                            $MESA_VDPAU \
-                           --disable-omx \
+                           --disable-omx-bellagio \
                            --disable-va \
                            --disable-opencl \
                            --enable-opencl-icd \
@@ -104,7 +104,7 @@ PKG_CONFIGURE_OPTS_TARGET="CC_FOR_BUILD=$HOST_CC \
                            --with-sysroot=$SYSROOT_PREFIX"
 
 pre_configure_target() {
-  export LIBS="-lxcb-dri3 -lxcb-dri2 -lxcb-xfixes -lxcb-present -lxcb-sync -lxshmfence -lz"
+  export LIBS="-lxcb-dri3 -lxcb-dri2 -lxcb-xfixes -lxcb-present -lxcb-sync -lxshmfence -lz -lLLVM"
 }
 
 post_makeinstall_target() {

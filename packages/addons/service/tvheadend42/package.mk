@@ -35,30 +35,12 @@ PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="Tvheadend Server 4.2"
 PKG_ADDON_TYPE="xbmc.service"
 
-# basic transcoding options
-PKG_TVH_TRANSCODING="\
-  --disable-ffmpeg_static \
-  --disable-libfdkaac_static \
-  --disable-libopus_static \
-  --disable-libtheora \
-  --disable-libtheora_static \
-  --disable-libvorbis_static \
-  --disable-libvpx_static \
-  --disable-libx264_static \
-  --disable-libx265_static \
-  --enable-libav \
-  --enable-libfdkaac \
-  --enable-libopus \
-  --enable-libvorbis \
-  --enable-libvpx \
-  --enable-libx264 \
-  --enable-libx265"
-
-# specific transcoding options
-if [[ "$TARGET_ARCH" != "x86_64" ]]; then
-  PKG_TVH_TRANSCODING="$PKG_TVH_TRANSCODING \
-    --disable-libvpx \
-    --disable-libx265"
+# transcoding only for generic
+if [ "$TARGET_ARCH" = x86_64 ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET intel-vaapi-driver"
+  TVH_TRANSCODING="--enable-ffmpeg_static --enable-libav --enable-libfdkaac --disable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --disable-qsv"
+else
+  TVH_TRANSCODING="--disable-ffmpeg_static --disable-libav"
 fi
 
 PKG_CONFIGURE_OPTS_TARGET="--prefix=/usr \
