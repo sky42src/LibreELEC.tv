@@ -136,4 +136,9 @@
   # for a list of additinoal drivers see packages/linux-drivers
   # Space separated list is supported,
   # e.g. ADDITIONAL_DRIVERS="DRIVER1 DRIVER2"
-    ADDITIONAL_DRIVERS="$ADDITIONAL_DRIVERS media_build rpi-cirrus-config"
+    ADDITIONAL_DRIVERS="$ADDITIONAL_DRIVERS rpi-cirrus-config"
+
+  # adding CrasyCat DVB drivers
+    if [ ! -z "$SKY42_CC" ] ; then
+      ADDITIONAL_DRIVERS="$ADDITIONAL_DRIVERS cc-dvb-rpi"
+    fi
