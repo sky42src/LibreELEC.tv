@@ -1,7 +1,8 @@
 #!/bin/sh
 
 ################################################################################
-#      This file is part of OpenELEC - http://www.openelec.tv
+#      This file is part of LibreELEC - https://libreelec.tv
+#      Copyright (C) 2016-present Team LibreELEC
 #      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
 #      Copyright (C) 2010-2011 Roman Weber (roman@openelec.tv)
 #      Copyright (C) 2012 Yann Cézard (eesprit@free.fr)
@@ -48,6 +49,8 @@
   IMAGE_KERNEL="KERNEL"
   IMAGE_SYSTEM="SYSTEM"
 
+  BOOT_IMAGE_DONE="no"
+
   BOOT_STEP="start"
   MD5_FAILED="0"
   RUN_FSCK="yes"
@@ -87,7 +90,10 @@
   for arg in $(cat /proc/cmdline); do
     case $arg in
       BOOT_IMAGE=*)
-        IMAGE_KERNEL="${arg#*=}"
+        if [ "${BOOT_IMAGE_DONE}" = "no" ]; then
+          IMAGE_KERNEL="${arg#*=}"
+          BOOT_IMAGE_DONE="yes"
+        fi
         ;;
       SYSTEM_IMAGE=*)
         IMAGE_SYSTEM="${arg#*=}"
@@ -143,6 +149,9 @@
         ;;
       noram)
         SYSTEM_TORAM=no
+        ;;
+      ramlimit=*)
+        SYSTEM_TORAM_LIMIT="${arg#*=}"
         ;;
       live)
         LIVE=yes
@@ -655,6 +664,10 @@
     wakeonlan
 
     mount_part "$boot" "/flash" "ro,noatime"
+
+    if [ -f /flash/post-flash.sh ] ; then
+      . /flash/post-flash.sh
+    fi
   }
 
   mount_storage() {
@@ -685,7 +698,12 @@
           disk="$target/$OVERLAY_DIR,$options"
         fi
       fi
-      mount_part "$disk" "/storage" "rw,noatime"
+
+      if [ -f /flash/mount-storage.sh ] ; then
+        . /flash/mount-storage.sh
+      else
+        mount_part "$disk" "/storage" "rw,noatime"
+      fi
     else
       # /storage should always be writable
       mount -t tmpfs none /storage
@@ -704,7 +722,6 @@
 
           mount -o remount,rw /flash
           sed -i "s/^DEFAULT .*/DEFAULT $SYSLINUX_DEFAULT/" /flash/syslinux.cfg
-          [ -f /flash/EFI/BOOT/syslinux.cfg ] && cp /flash/syslinux.cfg /flash/EFI/BOOT/syslinux.cfg
           mount -o remount,ro /flash
         fi
       fi
@@ -873,9 +890,7 @@
       # don't make temporary files but instead copy
       # directly from mountpoint to /flash
       UPDATE_DIR=$UPDATE_ROOT/.tmp/mnt
-      if [ ! -b $IMAGE_KERNEL -o -z "@KERNEL_NAME@" ]; then
-        UPDATE_KERNEL=$(basename $IMAGE_KERNEL)
-      else
+      if [ -n "@KERNEL_NAME@" ]; then
         UPDATE_KERNEL="@KERNEL_NAME@"
       fi
     else

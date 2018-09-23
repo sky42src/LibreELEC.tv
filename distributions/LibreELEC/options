@@ -173,7 +173,7 @@
   TESTING="no"
 
 # OEM packages for OEM's (yes / no)
-  OEM_SUPPORT="no"
+  OEM_SUPPORT="yes"
 
 # build and install nano text editor (yes / no)
   NANO_EDITOR="yes"
@@ -193,6 +193,6 @@
   ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
 
 # Default size of system partition, in MB, eg. 512
-  SYSTEM_SIZE=512
+  SYSTEM_SIZE=1024
 # Default system partition offset, in sectors, eg. 2048
   SYSTEM_PART_START=8192

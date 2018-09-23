@@ -17,11 +17,12 @@
 ################################################################################
 
 PKG_NAME="iwlwifi-firmware"
-PKG_VERSION="6a717a9"
+PKG_VERSION="7e1e1e6"
+PKG_SHA256="924ad5aa09d7b01827d0244b80f56b877ab0ee74b422505bb115c503a9a2b4c1"
 PKG_ARCH="any"
 PKG_LICENSE="Free-to-use"
-PKG_SITE="https://github.com/LibreELEC/iwlwifi-firmware"
-PKG_URL="https://github.com/LibreELEC/iwlwifi-firmware/archive/$PKG_VERSION.tar.gz"
+PKG_SITE="https://github.com/SupervisedThinking/iwlwifi-firmware"
+PKG_URL="https://github.com/SupervisedThinking/iwlwifi-firmware/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="firmware"
 PKG_SHORTDESC="iwlwifi-firmware: firmwares for various Intel WLAN drivers"
