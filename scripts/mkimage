@@ -1,7 +1,8 @@
 #!/bin/bash
 
 ################################################################################
-#      This file is part of OpenELEC - http://www.openelec.tv
+#      This file is part of LibreELEC - https://libreelec.tv
+#      Copyright (C) 2016-present Team LibreELEC
 #      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
 #
 #  OpenELEC is free software: you can redistribute it and/or modify
@@ -163,7 +164,6 @@ EOF
     mmd EFI EFI/BOOT
     mcopy $TOOLCHAIN/share/syslinux/bootx64.efi ::/EFI/BOOT
     mcopy $TOOLCHAIN/share/syslinux/ldlinux.e64 ::/EFI/BOOT
-    mcopy "$LE_TMP"/syslinux.cfg ::/EFI/BOOT
 elif [ "$BOOTLOADER" = "bcm2835-bootloader" ]; then
   # create bootloader configuration
     echo "image: creating bootloader configuration..."
@@ -300,7 +300,6 @@ fi # bootloader
     echo "image: modifying fs on part1 for open virtual appliance..."
     sed -i "/DEFAULT/ s/installer/run/" "$LE_TMP"/syslinux.cfg
     # FIXME: an unalias should work here, but it does not; call mcopy directly
-    $TOOLCHAIN/bin/mcopy -i $LE_TMP/part1.fat -o "$LE_TMP"/syslinux.cfg ::/EFI/BOOT
     $TOOLCHAIN/bin/mcopy -i $LE_TMP/part1.fat -o "$LE_TMP"/syslinux.cfg ::
     sync
     # merge modified part1 back to tmp disk image
