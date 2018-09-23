@@ -17,11 +17,11 @@
 ################################################################################
 
 PKG_NAME="intel-ucode"
-PKG_VERSION="20170707"
+PKG_VERSION="20180807"
 PKG_ARCH="x86_64"
 PKG_LICENSE="other"
 PKG_SITE="https://downloadcenter.intel.com/search?keyword=linux+microcode"
-PKG_URL="https://downloadmirror.intel.com/26925/eng/microcode-${PKG_VERSION}.tgz"
+PKG_URL="https://downloadmirror.intel.com/28039/eng/microcode-${PKG_VERSION}.tgz"
 PKG_DEPENDS_TARGET="toolchain intel-ucode:host"
 PKG_SECTION="linux-firmware"
 PKG_SHORTDESC="intel-ucode: Intel CPU microcodes"
