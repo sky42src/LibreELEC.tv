@@ -111,6 +111,18 @@ kernel_version() {
   get_pkg_version linux
 }
 
+kernel_make() {
+  LDFLAGS="" make CROSS_COMPILE=$TARGET_KERNEL_PREFIX \
+    ARCH="$TARGET_KERNEL_ARCH" \
+    HOSTCC="$TOOLCHAIN/bin/host-gcc" \
+    HOSTCXX="$TOOLCHAIN/bin/host-g++" \
+    HOSTCFLAGS="$HOST_CFLAGS" \
+    HOSTLDFLAGS="$HOST_LDFLAGS" \
+    HOSTCXXFLAGS="$HOST_CXXFLAGS" \
+    DEPMOD="$TOOLCHAIN/bin/depmod" \
+    "$@"
+}
+
 # get kernel module dir
 get_module_dir() {
   basename $(ls -d $(get_build_dir linux)/.install_pkg/usr/lib/modules/*)
