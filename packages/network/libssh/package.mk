@@ -17,11 +17,11 @@
 ################################################################################
 
 PKG_NAME="libssh"
-PKG_VERSION="0.7.3"
+PKG_VERSION="0.7.6"
 PKG_ARCH="any"
 PKG_LICENSE="OpenSource"
 PKG_SITE="http://www.libssh.org/"
-PKG_URL="https://git.libssh.org/projects/libssh.git/snapshot/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_URL="https://www.libssh.org/files/${PKG_VERSION%.*}/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain zlib openssl"
 PKG_SECTION="network"
 PKG_SHORTDESC="libssh: A working SSH implementation by means of a library"
