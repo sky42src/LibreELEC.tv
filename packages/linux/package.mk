@@ -59,12 +59,12 @@ case "$LINUX" in
     PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET imx6-status-led imx6-soc-fan irqbalanced"
     ;;
   default-rpi)
-    PKG_VERSION="0f937c8dc3201ebffa6c617c616fd7c65db65959" # 4.14.67
+    PKG_VERSION="3f8c1fd4b21a317e7329d4c8f67ac34d886e08c2" # 4.14.76
     PKG_URL="https://github.com/raspberrypi/linux/archive/$PKG_VERSION.tar.gz"
     PKG_PATCH_DIRS="default-rpi"
     ;;
   *)
-    PKG_VERSION="4.14.67"
+    PKG_VERSION="4.14.76"
     PKG_URL="http://www.kernel.org/pub/linux/kernel/v4.x/$PKG_NAME-$PKG_VERSION.tar.xz"
     PKG_PATCH_DIRS="default"
     ;;
