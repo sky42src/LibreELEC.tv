@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="xf86-video-amdgpu"
-PKG_VERSION="18.0.1"
+PKG_VERSION="18.1.0"
 PKG_ARCH="x86_64"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.x.org/"
