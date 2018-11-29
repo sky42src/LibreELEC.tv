@@ -17,7 +17,7 @@
 ################################################################################
 
 PKG_NAME="mesa"
-PKG_VERSION="18.2.5"
+PKG_VERSION="18.2.6"
 PKG_ARCH="any"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.mesa3d.org/"
@@ -100,6 +100,10 @@ PKG_CONFIGURE_OPTS_TARGET="CC_FOR_BUILD=$HOST_CC \
                            --with-dri-drivers=$DRI_DRIVERS \
                            --with-vulkan-drivers=no \
                            --with-sysroot=$SYSROOT_PREFIX"
+
+if [ "${BUILD_WITH_DEBUG}" != "yes" ]; then
+  PKG_MESON_OPTS_TARGET+=" -Db_ndebug=true"
+fi
 
 pre_configure_target() {
   export LIBS="-lxcb-dri3 -lxcb-dri2 -lxcb-xfixes -lxcb-present -lxcb-sync -lxshmfence -lz -lLLVM"
