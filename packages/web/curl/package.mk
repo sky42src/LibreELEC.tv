@@ -16,7 +16,7 @@ PKG_SHA256="a308377dbc9a16b2e994abd55455e5f9edca4e31666f8f8fcfe7a1a4aea419b9"
 PKG_LICENSE="MIT"
 PKG_SITE="http://curl.haxx.se"
 PKG_URL="http://curl.haxx.se/download/$PKG_NAME-$PKG_VERSION.tar.bz2"
-PKG_DEPENDS_TARGET="toolchain zlib openssl rtmpdump"
+PKG_DEPENDS_TARGET="toolchain zlib openssl rtmpdump libssh"
 PKG_LONGDESC="Client and library for (HTTP, HTTPS, FTP, ...) transfers."
 PKG_TOOLCHAIN="configure"
 
@@ -30,6 +30,7 @@ PKG_CONFIGURE_OPTS_TARGET="ac_cv_lib_rtmp_RTMP_Init=yes \
                            --enable-largefile \
                            --enable-http \
                            --enable-ftp \
+                           --with-libssh \
                            --enable-file \
                            --disable-ldap \
                            --disable-ldaps \
