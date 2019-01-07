@@ -88,8 +88,12 @@ for arg in $(cat /proc/cmdline); do
 done
 
 if [ -d $BOOT_ROOT/device_trees ]; then
-  rm $BOOT_ROOT/device_trees/*.dtb
-  cp -p $SYSTEM_ROOT/usr/share/bootloader/*.dtb $BOOT_ROOT/device_trees/
+  rm -f $BOOT_ROOT/device_trees/*.dtb
+  if [ -d $SYSTEM_ROOT/usr/share/bootloader/device_trees ]; then
+    cp -p $SYSTEM_ROOT/usr/share/bootloader/device_trees/*.dtb $BOOT_ROOT/device_trees/
+  else
+    cp -p $SYSTEM_ROOT/usr/share/bootloader/*.dtb $BOOT_ROOT/device_trees/ 2>/dev/null
+  fi
 fi
 
 if [ -f $SYSTEM_ROOT/usr/share/bootloader/boot.ini ]; then
