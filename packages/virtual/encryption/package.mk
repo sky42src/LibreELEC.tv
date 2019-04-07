@@ -14,8 +14,8 @@ PKG_LONGDESC="encryption: Metapackage for cryptsetup, fscryptctl packages"
 
 # only build cryptsetup if the kernel supports it
 grep -q ^CONFIG_DM_CRYPT= $(get_build_dir linux)/.config && \
-    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET cryptsetup" || true
+    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET cryptsetup" || :
 
 # only build fscryptctl if the kernel supports it
 grep -q ^CONFIG_EXT4_ENCRYPTION= $(get_build_dir linux)/.config && \
-    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET fscryptctl" || true
+    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET fscryptctl" || :
