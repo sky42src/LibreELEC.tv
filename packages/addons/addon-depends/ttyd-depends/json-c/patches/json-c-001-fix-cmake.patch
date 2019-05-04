@@ -1,0 +1,18 @@
+diff -Nau json-c-0.13.1-20180305/CMakeLists.txt json-c-0.13.1-20180305.patch/CMakeLists.txt
+--- json-c-0.13.1-20180305/CMakeLists.txt	2018-03-06 05:18:59.000000000 +0100
++++ json-c-0.13.1-20180305.patch/CMakeLists.txt	2019-05-04 20:16:20.406818762 +0200
+@@ -126,9 +126,11 @@
+ 
+ if (UNIX)
+ 	set(prefix ${CMAKE_INSTALL_PREFIX})
+-	set(exec_prefix ${CMAKE_INSTALL_PREFIX}/bin)
+-	set(libdir ${CMAKE_INSTALL_PREFIX}/lib)
+-	set(includedir ${CMAKE_INSTALL_PREFIX}/include)
++	# exec_prefix is prefix by default and CMake does not have the
++	# concept.
++	set(exec_prefix ${CMAKE_INSTALL_PREFIX})
++	set(libdir \${prefix}/lib)
++	set(includedir \${prefix}/include)
+ 	set(VERSION ${PROJECT_VERSION})
+ 	configure_file(json-c.pc.in json-c.pc @ONLY)
+ 	set(INSTALL_PKGCONFIG_DIR "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" CACHE PATH "Installation directory for pkgconfig (.pc) files")
