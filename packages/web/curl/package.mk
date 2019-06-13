@@ -8,7 +8,7 @@ PKG_SHA256="dbb48088193016d079b97c5c3efde8efa56ada2ebf336e8a97d04eb8e2ed98c1"
 PKG_LICENSE="MIT"
 PKG_SITE="http://curl.haxx.se"
 PKG_URL="http://curl.haxx.se/download/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="toolchain zlib openssl rtmpdump nghttp2"
+PKG_DEPENDS_TARGET="toolchain zlib openssl rtmpdump nghttp2 libssh"
 PKG_LONGDESC="Client and library for (HTTP, HTTPS, FTP, ...) transfers."
 PKG_TOOLCHAIN="configure"
 
@@ -67,6 +67,7 @@ PKG_CONFIGURE_OPTS_TARGET="ac_cv_lib_rtmp_RTMP_Init=yes \
                            --with-librtmp=$SYSROOT_PREFIX/usr \
                            --without-libidn \
                            --without-libidn2 \
+                           --with-libssh \
                            --with-nghttp2"
 
 pre_configure_target() {
