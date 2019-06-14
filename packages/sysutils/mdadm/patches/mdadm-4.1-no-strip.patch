@@ -1,0 +1,18 @@
+Common subdirectories: mdadm-4.1/clustermd_tests and mdadm-4.1.patch/clustermd_tests
+diff -Nau mdadm-4.1/Makefile mdadm-4.1.patch/Makefile
+--- mdadm-4.1/Makefile	2018-10-01 20:26:06.000000000 +0200
++++ mdadm-4.1.patch/Makefile	2020-08-02 00:41:14.032688814 +0200
+@@ -243,8 +243,8 @@
+ 	$(CC) $(CFLAGS) -DHAVE_STDINT_H -o sha1.o -c sha1.c
+ 
+ install : mdadm mdmon install-man install-udev
+-	$(INSTALL) -D $(STRIP) -m 755 mdadm $(DESTDIR)$(BINDIR)/mdadm
+-	$(INSTALL) -D $(STRIP) -m 755 mdmon $(DESTDIR)$(BINDIR)/mdmon
++	$(INSTALL) -D -m 755 mdadm $(DESTDIR)$(BINDIR)/mdadm
++	$(INSTALL) -D -m 755 mdmon $(DESTDIR)$(BINDIR)/mdmon
+ 
+ install-static : mdadm.static install-man
+ 	$(INSTALL) -D $(STRIP) -m 755 mdadm.static $(DESTDIR)$(BINDIR)/mdadm
+Common subdirectories: mdadm-4.1/misc and mdadm-4.1.patch/misc
+Common subdirectories: mdadm-4.1/systemd and mdadm-4.1.patch/systemd
+Common subdirectories: mdadm-4.1/tests and mdadm-4.1.patch/tests
