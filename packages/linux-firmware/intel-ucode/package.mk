@@ -1,30 +1,14 @@
-################################################################################
-#      This file is part of LibreELEC - https://libreelec.tv
-#      Copyright (C) 2016 Team LibreELEC
-#
-#  LibreELEC is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  LibreELEC is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
-################################################################################
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="intel-ucode"
-PKG_VERSION="20180807a"
+PKG_VERSION="20190514"
+PKG_SHA256="553858de4315d267d1f259d1146db028eec5112a797379a7a83f5c8a22e626b3"
 PKG_ARCH="x86_64"
 PKG_LICENSE="other"
-PKG_SITE="https://downloadcenter.intel.com/search?keyword=linux+microcode"
-PKG_URL="https://downloadmirror.intel.com/28087/eng/microcode-${PKG_VERSION}.tgz"
+PKG_SITE="https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files"
+PKG_URL="https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/archive/microcode-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain intel-ucode:host"
-PKG_SECTION="linux-firmware"
-PKG_SHORTDESC="intel-ucode: Intel CPU microcodes"
 PKG_LONGDESC="intel-ucode: Intel CPU microcodes"
 
 PKG_IS_ADDON="no"
@@ -32,13 +16,14 @@ PKG_AUTORECONF="no"
 
 unpack() {
   mkdir -p $PKG_BUILD
-  tar xf $SOURCES/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tgz -C $PKG_BUILD
+  tar xf $SOURCES/$PKG_NAME/intel-ucode-${PKG_VERSION}.tar.gz -C $PKG_BUILD
+  mv $PKG_BUILD/Intel-Linux-Processor-Microcode-Data-Files-microcode-${PKG_VERSION}/* $PKG_BUILD/
+  rmdir $PKG_BUILD/Intel-Linux-Processor-Microcode-Data-Files-microcode-${PKG_VERSION}/
 }
 
 make_host() {
   :
 }
-
 makeinstall_host() {
   :
 }
