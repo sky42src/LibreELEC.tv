@@ -1,0 +1,11 @@
+--- a/xbmc/cores/VideoPlayer/VideoRenderers/DebugRenderer.cpp
++++ b/xbmc/cores/VideoPlayer/VideoRenderers/DebugRenderer.cpp
+@@ -109,7 +109,7 @@
+ 
+     COverlayText *text = dynamic_cast<COverlayText*>(o);
+     if (text)
+-      text->PrepareRender("arial.ttf", 1, 12, 0, m_font, m_fontBorder, UTILS::COLOR::NONE, m_rv);
++      text->PrepareRender("arial.ttf", 1, 14, 0, m_font, m_fontBorder, UTILS::COLOR::NONE, m_rv);
+ 
+     RESOLUTION_INFO res = CServiceBroker::GetWinSystem()->GetGfxContext().GetResInfo(CServiceBroker::GetWinSystem()->GetGfxContext().GetVideoResolution());
+ 
