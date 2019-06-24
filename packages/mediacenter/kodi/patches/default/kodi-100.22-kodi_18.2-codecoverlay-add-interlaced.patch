@@ -1,0 +1,12 @@
+diff -Naur kodi-newclock5_18.2-Leia/xbmc/cores/VideoPlayer/VideoPlayerVideo.cpp kodi-newclock5_18.2-Leia.patch/xbmc/cores/VideoPlayer/VideoPlayerVideo.cpp
+--- kodi-newclock5_18.2-Leia/xbmc/cores/VideoPlayer/VideoPlayerVideo.cpp	2019-04-22 21:10:05.000000000 +0000
++++ kodi-newclock5_18.2-Leia.patch/xbmc/cores/VideoPlayer/VideoPlayerVideo.cpp	2019-04-23 14:37:31.801327273 +0000
+@@ -939,7 +939,7 @@
+   s << "vq:"   << std::setw(2) << std::min(99, m_processInfo.GetLevelVQ()) << "%";
+   s << ", Mb/s:" << std::fixed << std::setprecision(2) << (double)GetVideoBitrate() / (1024.0*1024.0);
+   s << ", dc:"   << m_processInfo.GetVideoDecoderName().c_str();
+-  s << ", " << width << "x" << height << "[" << std::setprecision(2) << m_processInfo.GetVideoDAR() << "]@" << std::fixed << std::setprecision(3) << m_processInfo.GetVideoFps() << ", deint:" << m_processInfo.GetVideoDeintMethod();
++  s << ", " << width << "x" << height << (m_processInfo.GetVideoInterlaced() ? "i" : "p") << " [" << std::setprecision(2) << m_processInfo.GetVideoDAR() << "]@" << std::fixed << std::setprecision(3) << m_processInfo.GetVideoFps() << ", deint:" << m_processInfo.GetVideoDeintMethod();
+   s << ", drop:" << m_iDroppedFrames;
+   s << ", skip:" << m_renderManager.GetSkippedFrames();
+ 
