@@ -8,8 +8,15 @@ PKG_SHA256="ec22be9a5dd94c9640e6348ed8391d1499af8ca2c2f01109198a414cff6c6cba"
 PKG_LICENSE="LGPL2.1+"
 PKG_SITE="http://www.freedesktop.org/wiki/Software/systemd"
 PKG_URL="https://github.com/systemd/systemd/archive/v$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain libcap kmod util-linux entropy libidn2"
+PKG_DEPENDS_TARGET="toolchain libcap kmod util-linux entropy libidn2 linux:host"
+PKG_NEED_UNPACK="$LINUX_DEPENDS"
 PKG_LONGDESC="A system and session manager for Linux, compatible with SysV and LSB init scripts."
+
+# only enable cryptsetup support if the kernel supports it
+grep -q ^CONFIG_DM_CRYPT= $(get_build_dir linux)/.config && \
+    LIBCRYPTSETUP=true || LIBCRYPTSETUP=false
+
+[ "$LIBCRYPTSETUP" = "true" ] && PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET cryptsetup"
 
 PKG_MESON_OPTS_TARGET="--libdir=/usr/lib \
                        -Drootprefix=/usr \
@@ -28,7 +35,7 @@ PKG_MESON_OPTS_TARGET="--libdir=/usr/lib \
                        -Dkmod=true \
                        -Dpam=false \
                        -Dmicrohttpd=false \
-                       -Dlibcryptsetup=false \
+                       -Dlibcryptsetup=$LIBCRYPTSETUP \
                        -Dlibcurl=false \
                        -Dlibidn=false \
                        -Dlibidn2=true \
@@ -238,6 +245,17 @@ post_makeinstall_target() {
   ln -sf /storage/.config/hwdb.d $INSTALL/etc/udev/hwdb.d
   safe_remove $INSTALL/etc/udev/rules.d
   ln -sf /storage/.config/udev.rules.d $INSTALL/etc/udev/rules.d
+
+
+  # /etc/crypttab support
+  if [ "$LIBCRYPTSETUP" = "true" ] ; then
+    ln -s /storage/.config/crypttab $INSTALL/etc/crypttab
+    mkdir -p $INSTALL/usr/lib/systemd/system-generators
+    cp systemd-cryptsetup-generator $INSTALL/usr/lib/systemd/system-generators
+    cd $INSTALL/usr/lib ; ln -s systemd/libsystemd-shared-242.so ; cd -
+  else
+    rm -f $INSTALL/usr/config/system.d/cryptsetup.mount.sample
+  fi
 }
 
 post_install() {
