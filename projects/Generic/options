@@ -32,8 +32,13 @@
 
   # Kernel to use. values can be:
   # default:  default mainline kernel
-    LINUX="default"
+    LINUX="${LINUX:-default}"
 
+  if [ "$LINUX" = "generic-4.19" ] ; then
+    BUILD_KERNEL=$(echo $LINUX | awk -F- '{ print $NF }')
+    BUILD_SUFFIX=$BUILD_KERNEL
+    IMAGE_SUFFIX=${IMAGE_SUFFIX:-kernel-${BUILD_KERNEL}}
+  fi
 
 ################################################################################
 # setup build defaults
