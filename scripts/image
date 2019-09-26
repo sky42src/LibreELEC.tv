@@ -160,6 +160,7 @@ EOF
 [ -n "${DEVICE}" ] && echo "LIBREELEC_DEVICE=\"${DEVICE}\"" >> ${INSTALL}/etc/os-release
 [ -n "${BUILDER_NAME}" ] && echo "BUILDER_NAME=\"${BUILDER_NAME}\"" >> ${INSTALL}/etc/os-release
 [ -n "${BUILDER_VERSION}" ] && echo "BUILDER_VERSION=\"${BUILDER_VERSION}\"" >> ${INSTALL}/etc/os-release
+[ -f ".builder_patch" ] && cat .builder_patch >> ${INSTALL}/etc/os-release
 
 # Create /etc/issue
 cat <<EOF >${INSTALL}/etc/issue
