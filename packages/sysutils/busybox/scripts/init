@@ -28,6 +28,7 @@ MODULE_DIR=/usr/lib/modules
 
 UPDATE_ROOT=/storage/.update
 UPDATE_DIR="$UPDATE_ROOT"
+UPDATE_TMP="/tmp/update"
 
 UPDATE_KERNEL="KERNEL"
 UPDATE_SYSTEM="SYSTEM"
@@ -40,6 +41,7 @@ RUN_FSCK="yes"
 RUN_FSCK_DISKS=""
 SYSLINUX_DEFAULT=""
 GRUB_DEFAULT=""
+USE_TMPFS="yes"
 
 NBD_DEVS="0"
 FLASH_FREE_MIN="5"
@@ -659,19 +661,22 @@ check_out_of_space() {
 do_cleanup() {
   StartProgress spinner "Cleaning up... "
 
-  if [ -d $UPDATE_ROOT/.tmp/mnt ]; then
-    if mountpoint -q $UPDATE_ROOT/.tmp/mnt ; then
-      # busybox umount deletes loop device automatically
-      umount $UPDATE_ROOT/.tmp/mnt
-    fi
+  for upd_dir in $UPDATE_ROOT $UPDATE_TMP; do
+    if [ -d $upd_dir/.tmp/mnt ]; then
+      if mountpoint -q $upd_dir/.tmp/mnt ; then
+        # busybox umount deletes loop device automatically
+        umount $upd_dir/.tmp/mnt
+      fi
 
-    [ -n $LOOP ] && losetup -d $LOOP &>/dev/null
-  fi
+      [ -n $LOOP ] && losetup -d $LOOP &>/dev/null
+    fi
+  done
 
   [ -f "$UPDATE_TAR" ] && rm -f "$UPDATE_TAR" &>/dev/null
   [ -f "$UPDATE_IMG_GZ" ] && rm -f "$UPDATE_IMG_GZ" &>/dev/null
   [ -f "$UPDATE_IMG" ] && rm -f "$UPDATE_IMG" &>/dev/null
 
+  rm -rf $UPDATE_TMP &>/dev/null
   rm -rf $UPDATE_ROOT/.tmp &>/dev/null
   rm -rf $UPDATE_ROOT/[0-9a-zA-Z]* &>/dev/null
   rm -f  $UPDATE_ROOT/.nocheck $UPDATE_ROOT/.nocompat &>/dev/null
@@ -679,6 +684,31 @@ do_cleanup() {
   sync
 
   StopProgress "done"
+}
+
+# Use /tmp if there is enough free memory to temporarily
+# contain the extracted data.
+select_optimal_update_dir() {
+  file_size=$1
+
+  dir="$UPDATE_ROOT"
+
+  if [ "$USE_TMPFS" = "yes" -a -n "$file_size" ]; then
+    mem_avail=$(awk '/^MemAvailable:/ {print ($2 * 1024) - (16 * 1024 * 1024)}' /proc/meminfo)
+
+    progress "Extracting - space required  : $file_size"
+    progress "Extracting - memory available: $mem_avail"
+
+    if [ $mem_avail -ge $file_size ]; then
+      dir="$UPDATE_TMP"
+    fi
+  else
+    progress "Extracting to /tmp is disabled"
+  fi
+
+  progress "Extracting to directory: $dir"
+
+  echo "$dir"
 }
 
 check_update() {
@@ -707,7 +737,8 @@ check_update() {
     return 0
   fi
 
-  mkdir -p $UPDATE_DIR/.tmp &>/dev/null
+  mkdir -p $UPDATE_ROOT/.tmp &>/dev/null
+  mkdir -p $UPDATE_TMP/.tmp &>/dev/null
   sync
 
   echo "UPDATE IN PROGRESS"
@@ -716,6 +747,8 @@ check_update() {
   echo ""
 
   if [ -f "$UPDATE_TAR" ]; then
+    UPDATE_DIR="$(select_optimal_update_dir $(stat -t "$UPDATE_TAR" | awk '{print $2}'))"
+
     TARRESULT="0"
 
     echo "Found new .tar archive"
@@ -740,8 +773,16 @@ check_update() {
       return 0
     fi
   elif [ -f "$UPDATE_IMG_GZ" -o -f "$UPDATE_IMG" ]; then
-    mkdir -p $UPDATE_DIR/.tmp/mnt &>/dev/null
+    [ -f "$UPDATE_IMG_GZ" ] && UPDATE_DIR="$(select_optimal_update_dir $(gunzip -l "$UPDATE_IMG_GZ" 2>/dev/null | awk 'NR == 2 {print $2}'))"
+
     IMG_FILE="$UPDATE_DIR/.tmp/update.img"
+
+    # UPDATE_DIR becomes the mounted image so that we don't make additional
+    # temporary files, and instead install directly from the mountpoint to /flash
+    UPDATE_DIR=$UPDATE_DIR/.tmp/mnt
+
+    mkdir -p $UPDATE_DIR &>/dev/null
+
     GZRESULT="0"
 
     if [ -f "$UPDATE_IMG_GZ" ]; then
@@ -795,11 +836,8 @@ check_update() {
     # use losetup because busybox mount does not support the -o offset option
     echo "Mounting system partition..."
     losetup -o $OFFSET $LOOP $IMG_FILE
-    mount -o ro,loop $LOOP $UPDATE_DIR/.tmp/mnt
+    mount -o ro,loop $LOOP $UPDATE_DIR
 
-    # don't make temporary files but instead copy
-    # directly from mountpoint to /flash
-    UPDATE_DIR=$UPDATE_ROOT/.tmp/mnt
     UPDATE_KERNEL="@KERNEL_NAME@"
   else
     UPDATE_FILENAME="$UPDATE_DIR/$UPDATE_SYSTEM"
@@ -1026,6 +1064,10 @@ for arg in $(cat /proc/cmdline); do
     nosplash)
       SPLASH=no
       ;;
+    notmpfs)
+      USE_TMPFS=no
+      ;;
+
     toram)
       SYSTEM_TORAM=yes
       ;;
