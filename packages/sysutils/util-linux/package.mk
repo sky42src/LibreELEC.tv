@@ -51,6 +51,7 @@ PKG_CONFIGURE_OPTS_TARGET="$UTILLINUX_CONFIG_DEFAULT \
                            --enable-libmount \
                            --enable-libsmartcols \
                            --enable-losetup \
+                           --enable-zramctl \
                            --enable-fsck \
                            --enable-fstrim \
                            --enable-blkid \
