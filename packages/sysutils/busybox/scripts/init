@@ -746,6 +746,10 @@ check_update() {
   echo "Please do not reboot or turn off your @DISTRONAME@ device!"
   echo ""
 
+###REMOVEME
+UPDATESTART="$(awk '{print $1}' /proc/uptime)"
+###REMOVEME
+
   if [ -f "$UPDATE_TAR" ]; then
     UPDATE_DIR="$(select_optimal_update_dir $(stat -t "$UPDATE_TAR" | awk '{print $2}'))"
 
@@ -844,6 +848,12 @@ check_update() {
   fi
 
   sync
+
+###REMOVEME
+UPDATEEND="$(awk '{print $1}' /proc/uptime)"
+echo "Time to extract: $(echo "${UPDATEEND} ${UPDATESTART}" | awk '{print $1 - $2}') seconds"
+UPDATESTART="$(awk '{print $1}' /proc/uptime)"
+###REMOVEME
 
   if [ ! -b "/$IMAGE_KERNEL" -a ! -f "/flash/$IMAGE_KERNEL" ] || [ ! -f "/flash/$IMAGE_SYSTEM" ]; then
     echo "Missing (target) ${IMAGE_KERNEL} or ${IMAGE_SYSTEM}!"
@@ -958,6 +968,13 @@ check_update() {
   umount /sysroot
   update_file "System" "$UPDATE_SYSTEM" "/flash/$IMAGE_SYSTEM"
   update_bootloader
+
+###REMOVEME
+UPDATEEND="$(awk '{print $1}' /proc/uptime)"
+echo "Time to update: $(echo "${UPDATEEND} ${UPDATESTART}" | awk '{print $1 - $2}') seconds"
+StartProgress countdown "Continuing... " 10 "NOW"
+###REMOVEME
+
   umount /update
   do_cleanup
   do_reboot
