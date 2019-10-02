@@ -61,7 +61,7 @@ MACHINE_UID="$(awk '/^Serial/{s='0000000' $3; print substr(s, length(s) - 7)}' /
 
 # script functions
 progress() {
-  if test "$PROGRESS" = "yes"; then
+  if [ "$PROGRESS" = "yes" ]; then
     echo "### $1 ###" >&2
   fi
 }
@@ -1113,7 +1113,7 @@ for arg in $(cat /proc/cmdline); do
   esac
 done
 
-if test "$DEBUG" = "yes"; then
+if [ "$DEBUG" = "yes" ]; then
   exec 3>&1
 else
   exec 3>/dev/null
@@ -1163,6 +1163,7 @@ for i in $STORAGE $FLASH ; do
     fi
   fi
 done
+
 # move some special filesystems
 /usr/bin/busybox mount --move /dev /sysroot/dev
 /usr/bin/busybox mount --move /proc /sysroot/proc
