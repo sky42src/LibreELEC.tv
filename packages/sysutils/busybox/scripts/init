@@ -726,7 +726,7 @@ select_optimal_update_dir() {
 
   progress "Extracting to directory: $dir"
 
-  mkdir -p $dir/.tmp &>/dev/null
+  mkdir -p $dir/.tmp
 
   echo "$dir"
 }
@@ -757,7 +757,7 @@ check_update() {
     return 0
   fi
 
-  mkdir -p $UPDATE_ROOT/.tmp &>/dev/null
+  mkdir -p $UPDATE_ROOT/.tmp
 
   echo "UPDATE IN PROGRESS"
   echo ""
@@ -803,7 +803,7 @@ UPDATESTART="$(awk '{print $1}' /proc/uptime)"
     # temporary files, and instead install directly from the mountpoint to /flash
     UPDATE_DIR=$UPDATE_DIR/.tmp/mnt
 
-    mkdir -p $UPDATE_DIR &>/dev/null
+    mkdir -p $UPDATE_DIR
 
     GZRESULT="0"
 
