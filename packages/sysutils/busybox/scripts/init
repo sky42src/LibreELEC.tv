@@ -30,6 +30,9 @@ UPDATE_ROOT=/storage/.update
 UPDATE_DIR="$UPDATE_ROOT"
 UPDATE_TMP="/tmp/update"
 
+UPDATE_FS_BLOAT=4 #MB
+UPDATE_FS_FLOAT=16 #MB
+
 UPDATE_KERNEL="KERNEL"
 UPDATE_SYSTEM="SYSTEM"
 IMAGE_KERNEL="@KERNEL_NAME@"
@@ -676,7 +679,12 @@ do_cleanup() {
   [ -f "$UPDATE_IMG_GZ" ] && rm -f "$UPDATE_IMG_GZ" &>/dev/null
   [ -f "$UPDATE_IMG" ] && rm -f "$UPDATE_IMG" &>/dev/null
 
-  rm -rf $UPDATE_TMP &>/dev/null
+  if [ -d $UPDATE_TMP ]; then
+    rm -fr $UPDATE_TMP/*
+    umount $UPDATE_TMP &>/dev/null
+    rm -rf $UPDATE_TMP &>/dev/null
+  fi
+
   rm -rf $UPDATE_ROOT/.tmp &>/dev/null
   rm -rf $UPDATE_ROOT/[0-9a-zA-Z]* &>/dev/null
   rm -f  $UPDATE_ROOT/.nocheck $UPDATE_ROOT/.nocompat &>/dev/null
@@ -694,19 +702,31 @@ select_optimal_update_dir() {
   dir="$UPDATE_ROOT"
 
   if [ "$USE_TMPFS" = "yes" -a -n "$file_size" ]; then
-    mem_avail=$(awk '/^MemAvailable:/ {print ($2 * 1024) - (16 * 1024 * 1024)}' /proc/meminfo)
 
-    progress "Extracting - space required  : $file_size"
-    progress "Extracting - memory available: $mem_avail"
+    # Account for a small additional excess space when creating tmpfs
+    disk_size=$((file_size + (UPDATE_FS_BLOAT * 1024 * 1024)))
 
-    if [ $mem_avail -ge $file_size ]; then
-      dir="$UPDATE_TMP"
+    # Calculate available memory, assuming we'll need a small buffer for other activities
+    mem_avail=$(awk '/^MemAvailable:/ {print ($2 * 1024)}' /proc/meminfo)
+    mem_avail=$((mem_avail - (UPDATE_FS_FLOAT * 1024 * 1024)))
+
+    progress "Extracting - anticipated file size : $file_size"
+    progress "Extracting - tmpfs size required   : $disk_size"
+    progress "Extracting - total memory available: $mem_avail"
+
+    if [ $mem_avail -ge $disk_size ]; then
+       mkdir -p $UPDATE_TMP
+       if /usr/bin/busybox mount -t tmpfs none $UPDATE_TMP -o size=$disk_size &>/dev/null; then
+         dir="$UPDATE_TMP"
+       fi
     fi
   else
-    progress "Extracting to /tmp is disabled"
+    progress "Extracting to tmpfs is disabled"
   fi
 
   progress "Extracting to directory: $dir"
+
+  mkdir -p $dir/.tmp &>/dev/null
 
   echo "$dir"
 }
@@ -738,8 +758,6 @@ check_update() {
   fi
 
   mkdir -p $UPDATE_ROOT/.tmp &>/dev/null
-  mkdir -p $UPDATE_TMP/.tmp &>/dev/null
-  sync
 
   echo "UPDATE IN PROGRESS"
   echo ""
