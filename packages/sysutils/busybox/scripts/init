@@ -105,6 +105,11 @@ break_after() {
   fi
 }
 
+# Return file size in bytes
+get_filesize() {
+  stat -L "$1" | awk 'NR == 2 {print $2}'
+}
+
 # Mount handlers
 # All handlers take the following parameters:
 # $1:target, $2:mountpoint, $3:mount options, [$4:fs type]
@@ -321,7 +326,7 @@ update_file() {
   if [ -f "$UPDATE_DIR/$2" -a -f "$3" ]; then
     mount -o remount,rw /flash
 
-    StartProgress percent "Updating $1... " "$3" $(stat -t "$UPDATE_DIR/$2" | awk '{print $2}')
+    StartProgress percent "Updating $1... " "$3" $(get_filesize "$UPDATE_DIR/$2")
       # use dd here with conv=fsync so that all writes are non-buffered
       # ensuring accurate progress - take the sync hit during the
       # transfer, rather than when flushing file buffers after the progress
@@ -781,7 +786,7 @@ UPDATESTART="$(awk '{print $1}' /proc/uptime)"
 ###REMOVEME
 
   if [ -f "$UPDATE_TAR" ]; then
-    UPDATE_DIR="$(select_optimal_update_dir $(stat -t "$UPDATE_TAR" | awk '{print $2}'))"
+    UPDATE_DIR="$(select_optimal_update_dir $(get_filesize "$UPDATE_TAR"))"
 
     TARRESULT="0"
 
@@ -957,14 +962,14 @@ UPDATESTART="$(awk '{print $1}' /proc/uptime)"
 
   # Disregard kernel size if it's a a block device
   if [ ! -b "/$IMAGE_KERNEL" ]; then
-    OLD_KERNEL=$(stat -t "/flash/$IMAGE_KERNEL" | awk '{print $2}')
+    OLD_KERNEL=$(get_filesize "/flash/$IMAGE_KERNEL")
   else
     OLD_KERNEL="0"
   fi
 
-  OLD_SYSTEM=$(stat -t "/flash/$IMAGE_SYSTEM" | awk '{print $2}')
-  NEW_KERNEL=$(stat -t "$UPDATE_DIR/$UPDATE_KERNEL" | awk '{print $2}')
-  NEW_SYSTEM=$(stat -t "$UPDATE_DIR/$UPDATE_SYSTEM" | awk '{print $2}')
+  OLD_SYSTEM=$(get_filesize "/flash/$IMAGE_SYSTEM")
+  NEW_KERNEL=$(get_filesize "$UPDATE_DIR/$UPDATE_KERNEL")
+  NEW_SYSTEM=$(get_filesize "$UPDATE_DIR/$UPDATE_SYSTEM")
 
   # old KERNEL+SYSTEM+free space - new KERNEL+SYSTEM must be higher than 5MB
   # at least 5MB free after update
