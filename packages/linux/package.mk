@@ -29,8 +29,8 @@ case "$LINUX" in
     PKG_SOURCE_NAME="linux-$LINUX-$PKG_VERSION.tar.gz"
     ;;
   generic-4.19)
-    PKG_VERSION="4.19.88"
-    PKG_SHA256="c1923b6bd166e6dd07be860c15f59e8273aaa8692bc2a1fce1d31b826b9b3fbe"
+    PKG_VERSION="4.19.98"
+    PKG_SHA256="91feb13bc22d60d69596ab1d01dfecbec13ef70f00c89a483e0733af94dd2937"
     PKG_URL="https://www.kernel.org/pub/linux/kernel/v4.x/$PKG_NAME-$PKG_VERSION.tar.xz"
     ;;
   *)
