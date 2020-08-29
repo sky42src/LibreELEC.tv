@@ -98,4 +98,5 @@
     BUILD_KERNEL=$(echo $LINUX | awk -F- '{ print $NF }')
     BUILD_SUFFIX=$BUILD_KERNEL
     IMAGE_SUFFIX=${IMAGE_SUFFIX:-kernel-${BUILD_KERNEL}}
+    DRIVER_ADDONS_SUPPORT="no"
   fi
