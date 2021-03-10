@@ -11,6 +11,13 @@ PKG_URL="https://github.com/systemd/systemd-stable/archive/v${PKG_VERSION}.tar.g
 PKG_DEPENDS_TARGET="toolchain libcap kmod util-linux entropy libidn2 wait-time-sync"
 PKG_LONGDESC="A system and session manager for Linux, compatible with SysV and LSB init scripts."
 
+# only enable cryptsetup support if the kernel supports it
+PKG_KERNEL_CFG_FILE=$(kernel_config_path) || die
+grep -q ^CONFIG_DM_CRYPT= "${PKG_KERNEL_CFG_FILE}" \
+  && LIBCRYPTSETUP=true \
+  || LIBCRYPTSETUP=false
+[ "$LIBCRYPTSETUP" = "true" ] && PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET cryptsetup"
+
 PKG_MESON_OPTS_TARGET="--libdir=/usr/lib \
                        -Drootprefix=/usr \
                        -Dsplit-usr=false \
@@ -30,7 +37,7 @@ PKG_MESON_OPTS_TARGET="--libdir=/usr/lib \
                        -Dpam=false \
                        -Dpwquality=false \
                        -Dmicrohttpd=false \
-                       -Dlibcryptsetup=false \
+                       -Dlibcryptsetup=$LIBCRYPTSETUP \
                        -Dlibcurl=false \
                        -Dlibidn=false \
                        -Dlibidn2=true \
@@ -250,6 +257,16 @@ post_makeinstall_target() {
   ln -sf /storage/.config/hwdb.d ${INSTALL}/etc/udev/hwdb.d
   safe_remove ${INSTALL}/etc/udev/rules.d
   ln -sf /storage/.config/udev.rules.d ${INSTALL}/etc/udev/rules.d
+
+  # /etc/crypttab support
+  if [ "$LIBCRYPTSETUP" = "true" ] ; then
+    ln -s /storage/.config/crypttab $INSTALL/etc/crypttab
+    mkdir -p $INSTALL/usr/lib/systemd/system-generators
+    cp systemd-cryptsetup-generator $INSTALL/usr/lib/systemd/system-generators
+    cd $INSTALL/usr/lib ; ln -s systemd/libsystemd-shared-242.so ; cd -
+  else
+    rm -f $INSTALL/usr/config/system.d/cryptsetup.mount.sample
+  fi
 }
 
 post_install() {
