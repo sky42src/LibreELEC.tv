@@ -1,0 +1,54 @@
+# This is a example unit file to mount a device from /etc/crypttab
+# Please read carefully the comments in this file. For production usage
+# you can remove all comments (lines beginning with "#") from this file.
+
+# fast and easy activate after making a luks-temp entry in /etc/crypttab
+# cp /storage/.config/system.d/cryptsetup.mount.sample /storage/.config/system.d/storage-.kodi-temp.mount
+# systemctl enable /storage/.config/system.d/storage-.kodi-temp.mount
+
+[Unit]
+# The description should be used to explain what this mountfile is for
+Description=luks mount for Kodi temp
+
+DefaultDependencies=no
+Conflicts=umount.target
+Requires=cryptsetup.target
+After=cryptsetup.target
+
+# usually we mount shares/device because we want they avaible *before* Kodi starts.
+# so Kodi has access to this mounts from the beginning. Note: this slows down the boot!
+Before=kodi-autostart.service kodi.service
+
+# only mount if the following exist, that would be the /etc/crypttab device name entry
+ConditionPathIsSymbolicLink=/dev/mapper/luks-temp
+
+
+[Mount]
+# also change ConditionPathIsSymbolicLink above
+# The device we want mount, that should ahve a /etc/crypttab entry
+What=/dev/mapper/luks-temp
+
+# Where we want mount this device
+Where=/storage/.kodi/temp
+
+# optional the filesystem
+Type=ext4
+
+# optional the mount options
+Options=strictatime,nosuid,nodev
+
+
+[Install]
+# The target is used by 'systemctl enable <name_of_this_file.mount>' to link
+# this service to a runlevel for starting on boot. usually 'multi-user.target'
+# is ok here.
+WantedBy=multi-user.target
+
+# Important:
+# this file must be renamed to <mountpoint>.mount where <mountpoint>, is the FULL path
+# where the share will be mounted but slashes "/" MUST BE REPLACED with dashes "-" with .mount
+# as extension.
+# This means, if we want mount to "/storage/.kodi/temp" (see above "Where=/storage/.kodi/temp")
+# then this file must be renamed to 'storage-.kodi-temp.mount' and can be enabled via ssh with the
+# command 'systemctl enable storage-.kodi-temp.mount'
+
