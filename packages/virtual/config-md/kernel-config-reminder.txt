@@ -1,0 +1,18 @@
+DM and MD
+
+Device Drivers
+  * Multiple devices driver support (RAID and LVM)
+    {M}   RAID support                           
+    <M>     Linear (append) mode (deprecated)    
+    -M-     RAID-0 (striping) mode               
+    -M-     RAID-1 (mirroring) mode              
+    -M-     RAID-10 (mirrored striping) mode     
+    -M-     RAID-4/RAID-5/RAID-6 mode            
+    <M>   Device mapper support                  
+    [*]     Block manager locking                
+    <M>     Crypt target support                 
+    <M>     Snapshot target                      
+    <M>     Mirror target                        
+    <M>     RAID 1/4/5/6/10 target               
+    [*]     DM uevents                           
+    <M>     Integrity target support             
