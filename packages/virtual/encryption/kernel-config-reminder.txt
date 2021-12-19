@@ -1,0 +1,30 @@
+CRYPTO
+
+File systems
+  * FS Encryption (Per-file encryption)
+
+Cryptographic API
+  M Userspace cryptographic algorithm configuration
+  M Parallel crypto engine
+  M Curve25519 algorithm
+  * CTS support
+  M LRW support
+  * XTS support
+crc32c x86
+crc32 NI
+GHASH NI || GHASH
+nhpoly1305 x86 || poly1305
+ripmd 160
+Whirpool
+Blowfish x86 || Blowfish
+slasa20 steram
+chacha stream
+serpent
+twofish x86 || twofish
+LZO
+LZ4
+Zstd
+* Pseudo Random Number Generation for Cryptographic modules
+* api random number
+* Crypto usage statistics for User-space
+
