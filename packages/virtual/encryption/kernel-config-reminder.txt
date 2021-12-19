@@ -1,0 +1,165 @@
+CRYPTO
+
+File systems
+  * FS Encryption (Per-file encryption)
+
+Cryptographic API
+
+  Crypto core or helper
+    <M> Userspace cryptographic algorithm configuration
+arm [*] Disable run-time self tests
+    -*- Null algorithms                                
+    <M> Parallel crypto engine                         
+    -*- Software async crypto daemon                   
+    -*- Authenc support                                
+
+  Public-key cryptography
+    -*- RSA (Rivest-Shamir-Adleman)                                 
+    -*- DH (Diffie-Hellman)                                         
+    {M} ECDH (Elliptic Curve Diffie-Hellman)                        
+    <M> Curve25519                                                  
+
+  Block ciphers
+    -*- AES (Advanced Encryptio
+    <M> Blowfish               
+    <*> DES and Triple DES EDE 
+    {M} Serpent                
+    <M> Twofish                
+
+  Length-preserving ciphers and modes
+    {M} ChaCha                                        
+    -*- CBC (Cipher Block Chaining)                   
+    <M> CFB (Cipher Feedback)                         
+    -*- CTR (Counter)                                 
+    <M> CTS (Cipher Text Stealing)                    
+    -*- ECB (Electronic Codebook)                     
+    <M> HCTR2
+    <M> LRW (Liskov Rivest Wagner)                    
+arm <M> OFB (Output Feedback)
+    <M> XTS (XOR Encrypt XOR with ciphertext stealing)
+
+  AEAD (authenticated encryption with associated data) ciphers
+    {M} ChaCha20-Poly1305                           
+    -*- CCM (Counter with Cipher Block Chaining-MAC)
+    -*- GCM (Galois/Counter Mode) and GMAC (GCM MAC)
+    -*- Sequence Number IV Generator                
+    -*- Encrypted Chain IV Generator                
+    {M} Encrypted Salt-Sector IV Generator          
+
+
+  Hashes, digests, and MACs
+    -*- BLAKE2b aphic API                            
+    -*- CMAC (Cipher-based MAC)                      
+    -*- GHASH                                        
+    -*- HMAC (Keyed-Hash MAC)                        
+    <*> MD4                                          
+    -*- MD5                                          
+    {M} Michael MIC                                  
+    {M} Poly1305                                     
+    <M> RIPEMD-160                                   
+    -*- SHA-1                                        
+    -*- SHA-224 and SHA-256                          
+    -*- SHA-384 and SHA-512                          
+    {M} SHA-3                                        
+    <M> Whirlpool                                    
+    -*- xxHash                                       
+
+  CRCs (cyclic redundancy checks)
+    -*- CRC32c raphic API                      
+    -*- CRC32                                  
+    -*- CRCT10DIF                              
+    -*- CRC64 based on Rocksoft Model algorithm
+
+  Compression
+arm -*- Deflate aphic API
+    <M> LZO  
+    <M> LZ4  
+    <M> Zstd 
+
+  Random number generation
+    <M> ANSI PRNG (Pseudo Random Number Generator)                    
+    -*- NIST SP800-90A DRBG (Deterministic Random Bit Generator)  --->
+    -*- CPU Jitter Non-Deterministic RNG (Random Number Generator)    
+
+  Userspace interface
+    <*> Hash algorithms                         
+    <*> Symmetric key cipher algorithms         
+    <M> RNG (random number generator) algorithms
+    <*> AEAD cipher algorithms                  
+    [*] Obsolete cryptographic algorithms       
+    [*] Crypto usage statistics                 
+
+  Accelerated Cryptographic Algorithms for CPU (x86)
+    {M} Public key crypto: Curve25519 (ADX)                            
+    <*> Ciphers: AES, modes: ECB, CBC, CTS, CTR, XTR, XTS, GCM (AES-NI)
+    <M> Ciphers: Blowfish, modes: ECB, CBC                             
+    <*> Ciphers: Triple DES EDE with modes: ECB, CBC                   
+    <M> Ciphers: Serpent with modes: ECB, CBC (SSE2)                   
+    {M} Ciphers: Serpent with modes: ECB, CBC (AVX)                    
+    <M> Ciphers: Serpent with modes: ECB, CBC (AVX2)                   
+    {M} Ciphers: Twofish                                               
+    {M} Ciphers: Twofish with modes: ECB, CBC (3-way parallel)         
+    <M> Ciphers: Twofish with modes: ECB, CBC (AVX)                    
+    {M} Ciphers: ChaCha20, XChaCha20, XChaCha12 (SSSE3/AVX2/AVX-512VL) 
+    -*- Hash functions: BLAKE2s (SSSE3/AVX-512)                        
+    {M} Hash functions: Poly1305 (SSE2/AVX2)                           
+    <*> Hash functions: SHA-1 (SSSE3/AVX/AVX2/SHA-NI)                  
+    <*> Hash functions: SHA-224 and SHA-256 (SSSE3/AVX/AVX2/SHA-NI)    
+    <*> Hash functions: SHA-384 and SHA-512 (SSSE3/AVX/AVX2)           
+    <M> Hash functions: GHASH (CLMUL-NI)                               
+    <M> CRC32c (SSE4.2/PCLMULQDQ)                                      
+    <M> CRC32 (PCLMULQDQ)                                              
+    <M> CRCT10DIF (PCLMULQDQ)                                          
+
+  Accelerated Cryptographic Algorithms for CPU (arm64)
+    <M> Hash functions: GHASH (ARMv8 Crypto Extensions)                  
+    {M} Hash functions: Poly1305 (NEON)                                  
+    <M> Hash functions: SHA-1 (ARMv8 Crypto Extensions)                  
+    {M} Hash functions: SHA-224 and SHA-256                              
+    <M> Hash functions: SHA-224 and SHA-256 (ARMv8 Crypto Extensions)    
+    {M} Hash functions: SHA-384 and SHA-512                              
+    <M> Hash functions: SHA-384 and SHA-512 (ARMv8 Crypto Extensions)    
+    <M> Hash functions: SHA-3 (ARMv8.2 Crypto Extensions)                
+    <*> Ciphers: AES, modes: ECB, CBC, CTR, CTS, XCTR, XTS               
+    {M} Ciphers: AES (ARMv8 Crypto Extensions)                           
+    <M> Ciphers: AES, modes: ECB/CBC/CTR/XTS (ARMv8 Crypto Extensions)   
+    -*- Ciphers: AES, modes: ECB/CBC/CTR/XTS (NEON)                      
+    {M} Ciphers: ChaCha (NEON)                                           
+    <*> Ciphers: AES, modes: ECB/CBC/CTR/XCTR/XTS modes (bit-sliced NEON)
+    <M> AEAD cipher: AES in CCM mode (ARMv8 Crypto Extensions)           
+    <M> CRCT10DIF (PMULL)                                                
+
+  * Hardware crypto devices (x86_64)
+    <M>   Support for VIA PadLock ACE                           
+    <M>     PadLock driver for AES algorithm                    
+    <M>     PadLock driver for SHA1 and SHA256 algorithms       
+    <M>   Support for Microchip / Atmel ECC hw accelerator      
+    <M>   Support for Microchip / Atmel SHA accelerator and RNG 
+    [*]   Support for AMD Secure Processor                      
+    <M>     Secure Processor device driver (NEW)                
+    [*] Cryptographic Coprocessor device (NEW)                  
+    <M> Encryption and hashing offload support (NEW)            
+    [*] Platform Security Processor (PSP) device (NEW)          
+    <M>   Support for Intel(R) DH895xCC                         
+    <M>   Support for Intel(R) C3XXX                            
+    <M>   Support for Intel(R) C62X                             
+    <M>   Support for Intel(R) QAT_4XXX                         
+    <M>   Support for Intel(R) DH895xCC Virtual Function        
+    <M>   Support for Intel(R) C3XXX Virtual Function           
+    <M>   Support for Intel(R) C62X Virtual Function            
+    <M>   VirtIO crypto driver                                  
+
+  * Hardware crypto devices (arm64)
+    <M>   Support for Cavium CNN55XX driver                                 
+    <M>   Cavium ZIP driver                                                 
+    <M>   Support for ARM TrustZone CryptoCell family of security processors
+    <M>   Support for Hisilicon SEC crypto block cipher accelerator         
+    <M>   Support for amlogic cryptographic offloader                       
+    [*]     Enable amlogic stats                                            
+
+  * Asymmetric (public-key cryptographic) key type
+    -*-   Asymmetric public-key crypto algorithm subtype              
+    -*-     X.509 certificate parser                                  
+    <M>     PKCS#8 private key parser                                 
+    -*-   PKCS#7 message parser                                       
+    [*]   Support for PE file signature verification                  
