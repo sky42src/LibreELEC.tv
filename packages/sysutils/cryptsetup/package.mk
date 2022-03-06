@@ -2,8 +2,8 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="cryptsetup"
-PKG_VERSION="2.3.4"
-PKG_SHA256="9d16eebb96b53b514778e813019b8dd15fea9fec5aafde9fae5febf59df83773"
+PKG_VERSION="2.3.7"
+PKG_SHA256="61835132a5986217af17b8943013aa3fe6d47bdc1a07386343526765e2ce27a9"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://gitlab.com/cryptsetup/cryptsetup"
