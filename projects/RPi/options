@@ -53,6 +53,12 @@
   # default:  default mainline kernel
     LINUX="raspberrypi"
 
+  # changes for 5.15
+    BUILD_KERNEL=${BUILD_KERNEL:-5.15}
+    IMAGE_SUFFIX=${IMAGE_SUFFIX:-linux-${BUILD_KERNEL}}
+    # no extra RTL driver
+    ADDITIONAL_DRIVERS=""
+
 ################################################################################
 # setup build defaults
 ################################################################################
