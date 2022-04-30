@@ -3,17 +3,17 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="xf86-video-nvidia"
-# Remember to run "python3 packages/x11/driver/xf86-video-nvidia/scripts/make_nvidia_udev.py" and commit changes to
-# "packages/x11/driver/xf86-video-nvidia/udev.d/96-nvidia.rules" whenever bumping version.
-# Host may require installation of python3-lxml and python3-requests packages.
-PKG_VERSION="460.67"
-PKG_SHA256="a19253cf805f913a3b53098587d557fb21c9b57b1568cb630e128ebb3276c10e"
+# Remember to run "python3 packages/x11/driver/xf86-video-nvidia/scripts/make_nvidia_udev.py" and commit
+# changes to "packages/x11/driver/xf86-video-nvidia/udev.d/96-nvidia.rules" whenever bumping version.
+# The build host may require installation of python3-lxml and python3-requests packages.
+PKG_VERSION="470.94"
+PKG_SHA256="0b49cb861fdfea91753d3fddf7bd4251c3705cd93f0ebc7b5a52cbcdb7e4cf48"
 PKG_ARCH="x86_64"
 PKG_LICENSE="nonfree"
-PKG_SITE="http://www.nvidia.com/"
+PKG_SITE="https://www.nvidia.com/en-us/drivers/unix/"
 PKG_URL="http://us.download.nvidia.com/XFree86/Linux-x86_64/${PKG_VERSION}/NVIDIA-Linux-x86_64-${PKG_VERSION}-no-compat32.run"
 PKG_DEPENDS_TARGET="util-macros xorg-server libvdpau libglvnd"
-PKG_LONGDESC="The Xorg driver for NVIDIA video chips."
+PKG_LONGDESC="The Xorg driver for NVIDIA GPUs supporting the GeForce 600 Series & above."
 PKG_TOOLCHAIN="manual"
 
 PKG_IS_KERNEL_PKG="yes"
@@ -39,7 +39,7 @@ makeinstall_target() {
     ln -sf /var/lib/nvidia_drv.so ${INSTALL}/${XORG_PATH_MODULES}/drivers/nvidia_drv.so
 
   mkdir -p ${INSTALL}/${XORG_PATH_MODULES}/extensions
-  # rename to avoid conflicts with X.Org-Server module libglx.so 
+  # rename to avoid conflicts with X.Org-Server module libglx.so
     cp -P libglxserver_nvidia.so.${PKG_VERSION} ${INSTALL}/${XORG_PATH_MODULES}/extensions/libglx_nvidia.so
 
   mkdir -p ${INSTALL}/etc/X11
@@ -47,6 +47,7 @@ makeinstall_target() {
 
   mkdir -p ${INSTALL}/usr/lib
     cp -P libnvidia-glcore.so.${PKG_VERSION} ${INSTALL}/usr/lib
+    cp -P libnvidia-glsi.so.${PKG_VERSION} ${INSTALL}/usr/lib
     cp -P libnvidia-ml.so.${PKG_VERSION} ${INSTALL}/usr/lib
     ln -sf /var/lib/libnvidia-ml.so.1 ${INSTALL}/usr/lib/libnvidia-ml.so.1
     cp -P libnvidia-tls.so.${PKG_VERSION} ${INSTALL}/usr/lib
