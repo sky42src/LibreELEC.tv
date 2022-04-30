@@ -31,6 +31,11 @@
   # default:  default mainline kernel
     LINUX="default"
 
+  # changes for 5.15
+    BUILD_KERNEL=${BUILD_KERNEL:-5.15}
+    IMAGE_SUFFIX=${IMAGE_SUFFIX:-linux-${BUILD_KERNEL}}
+    # no extra RTL driver
+    ADDITIONAL_DRIVERS=""
 
 ################################################################################
 # setup build defaults
@@ -74,8 +79,7 @@
     ADDITIONAL_DRIVERS="$ADDITIONAL_DRIVERS bcm_sta"
 
   # build and install driver addons (yes / no)
-    DRIVER_ADDONS_SUPPORT="yes"
-
+    DRIVER_ADDONS_SUPPORT="no"
   # driver addons to install:
   # for a list of additional drivers see packages/linux-driver-addons
   # Space separated list is supported,
