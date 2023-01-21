@@ -266,7 +266,7 @@ post_makeinstall_target() {
     ln -s /storage/.config/crypttab $INSTALL/etc/crypttab
     mkdir -p $INSTALL/usr/lib/systemd/system-generators
     cp systemd-cryptsetup-generator $INSTALL/usr/lib/systemd/system-generators
-    cd $INSTALL/usr/lib ; ln -s systemd/libsystemd-shared-242.so ; cd -
+    cd $INSTALL/usr/lib ; ln -s systemd/libsystemd-shared-*.so ; cd -
   else
     rm -f $INSTALL/usr/config/system.d/cryptsetup.mount.sample
   fi
