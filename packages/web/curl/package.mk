@@ -8,7 +8,7 @@ PKG_SHA256="2d61116e5f485581f6d59865377df4463f2e788677ac43222b496d4e49fb627b"
 PKG_LICENSE="MIT"
 PKG_SITE="https://curl.haxx.se"
 PKG_URL="https://curl.haxx.se/download/${PKG_NAME}-${PKG_VERSION}.tar.xz"
-PKG_DEPENDS_TARGET="toolchain zlib openssl rtmpdump libidn2 nghttp2"
+PKG_DEPENDS_TARGET="toolchain zlib openssl rtmpdump libidn2 nghttp2 libssh"
 PKG_LONGDESC="Client and library for (HTTP, HTTPS, FTP, ...) transfers."
 PKG_TOOLCHAIN="configure"
 
@@ -68,7 +68,8 @@ PKG_CONFIGURE_OPTS_TARGET="ac_cv_lib_rtmp_RTMP_Init=yes \
                            --without-libssh2 \
                            --with-librtmp \
                            --with-libidn2 \
-                           --with-nghttp2"
+                           --with-nghttp2 \
+                           --with-libssh"
 
 post_configure_target() {
   libtool_remove_rpath libtool
