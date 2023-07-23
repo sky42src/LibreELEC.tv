@@ -1,0 +1,96 @@
+From c51dc4b07dbcbbe49ae0cf24b4fba2079ca63425 Mon Sep 17 00:00:00 2001
+From: Lukas Rusak <lorusak@gmail.com>
+Date: Thu, 16 Sep 2021 16:39:36 -0700
+Subject: [PATCH] CWinSystemGbm: add colourspace connector property
+
+---
+ .../Buffers/VideoBufferDRMPRIME.cpp           | 12 ++++++++
+ .../VideoPlayer/Buffers/VideoBufferDRMPRIME.h |  1 +
+ xbmc/windowing/gbm/WinSystemGbm.cpp           | 30 +++++++++++++++++--
+ 3 files changed, 41 insertions(+), 2 deletions(-)
+
+diff --git a/xbmc/cores/VideoPlayer/Buffers/VideoBufferDRMPRIME.cpp b/xbmc/cores/VideoPlayer/Buffers/VideoBufferDRMPRIME.cpp
+index b1c23ffc3dc55..a5fb7ddf44d72 100644
+--- a/xbmc/cores/VideoPlayer/Buffers/VideoBufferDRMPRIME.cpp
++++ b/xbmc/cores/VideoPlayer/Buffers/VideoBufferDRMPRIME.cpp
+@@ -20,6 +20,18 @@ extern "C"
+ namespace DRMPRIME
+ {
+ 
++std::string GetColorimetry(const VideoPicture& picture)
++{
++  switch (picture.color_space)
++  {
++    case AVCOL_SPC_BT2020_CL:
++    case AVCOL_SPC_BT2020_NCL:
++      return "BT2020_RGB";
++  }
++
++  return "Default";
++}
++
+ std::string GetColorEncoding(const VideoPicture& picture)
+ {
+   switch (picture.color_space)
+diff --git a/xbmc/cores/VideoPlayer/Buffers/VideoBufferDRMPRIME.h b/xbmc/cores/VideoPlayer/Buffers/VideoBufferDRMPRIME.h
+index e77f75b58bff4..4de9732308caa 100644
+--- a/xbmc/cores/VideoPlayer/Buffers/VideoBufferDRMPRIME.h
++++ b/xbmc/cores/VideoPlayer/Buffers/VideoBufferDRMPRIME.h
+@@ -34,6 +34,7 @@ enum hdmi_eotf
+   HDMI_EOTF_BT_2100_HLG,
+ };
+ 
++std::string GetColorimetry(const VideoPicture& picture);
+ std::string GetColorEncoding(const VideoPicture& picture);
+ std::string GetColorRange(const VideoPicture& picture);
+ uint8_t GetEOTF(const VideoPicture& picture);
+diff --git a/xbmc/windowing/gbm/WinSystemGbm.cpp b/xbmc/windowing/gbm/WinSystemGbm.cpp
+index 4fd2da4ca8d57..3fc778ed4b77c 100644
+--- a/xbmc/windowing/gbm/WinSystemGbm.cpp
++++ b/xbmc/windowing/gbm/WinSystemGbm.cpp
+@@ -330,9 +330,23 @@ bool CWinSystemGbm::SetHDR(const VideoPicture* videoPicture)
+   if (!drm)
+     return false;
+ 
++  auto connector = drm->GetConnector();
++  if (!connector)
++    return false;
++
+   if (!videoPicture)
+   {
+-    auto connector = drm->GetConnector();
++    if (connector->SupportsProperty("Colorspace"))
++    {
++      auto [result, value] = connector->GetPropertyValue("Colorspace", "Default");
++      if (result)
++      {
++        CLog::Log(LOGDEBUG, "CWinSystemGbm::{} - setting connector colorspace to Default",
++                  __FUNCTION__);
++        drm->AddProperty(connector, "Colorspace", value);
++      }
++    }
++
+     if (connector->SupportsProperty("HDR_OUTPUT_METADATA"))
+     {
+       drm->AddProperty(connector, "HDR_OUTPUT_METADATA", 0);
+@@ -346,7 +360,19 @@ bool CWinSystemGbm::SetHDR(const VideoPicture* videoPicture)
+     return true;
+   }
+ 
+-  auto connector = drm->GetConnector();
++  if (connector->SupportsProperty("Colorspace"))
++  {
++    auto [result, value] =
++        connector->GetPropertyValue("Colorspace", DRMPRIME::GetColorimetry(*videoPicture));
++    if (result)
++    {
++      CLog::Log(LOGDEBUG, "CWinSystemGbm::{} - setting connector colorspace to {}", __FUNCTION__,
++                DRMPRIME::GetColorimetry(*videoPicture));
++      drm->AddProperty(connector, "Colorspace", value);
++      drm->SetActive(true);
++    }
++  }
++
+   if (connector->SupportsProperty("HDR_OUTPUT_METADATA"))
+   {
+     hdr_output_metadata hdr_metadata = {};
