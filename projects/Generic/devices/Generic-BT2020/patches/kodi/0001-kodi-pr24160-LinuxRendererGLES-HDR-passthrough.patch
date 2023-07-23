@@ -1,0 +1,30 @@
+From f41e53f9c2d6ae98a50faf15d9926e993caadbbb Mon Sep 17 00:00:00 2001
+From: smp79 <sergey79@gmail.com>
+Date: Sun, 7 Apr 2024 17:18:32 +0300
+Subject: [PATCH] LinuxRendererGLES: remove metadata info check for HDR
+ passthrough
+
+---
+ .../VideoPlayer/VideoRenderers/LinuxRendererGLES.cpp     | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/xbmc/cores/VideoPlayer/VideoRenderers/LinuxRendererGLES.cpp b/xbmc/cores/VideoPlayer/VideoRenderers/LinuxRendererGLES.cpp
+index 85ab951b111e8..13915c6c91061 100644
+--- a/xbmc/cores/VideoPlayer/VideoRenderers/LinuxRendererGLES.cpp
++++ b/xbmc/cores/VideoPlayer/VideoRenderers/LinuxRendererGLES.cpp
+@@ -132,12 +132,9 @@ bool CLinuxRendererGLES::Configure(const VideoPicture &picture, float fps, unsig
+   // setup the background colour
+   m_clearColour = CServiceBroker::GetWinSystem()->UseLimitedColor() ? (16.0f / 0xff) : 0.0f;
+ 
+-  if (picture.hasDisplayMetadata && picture.hasLightMetadata)
+-  {
+-    m_passthroughHDR = CServiceBroker::GetWinSystem()->SetHDR(&picture);
+-    CLog::Log(LOGDEBUG, "LinuxRendererGLES::Configure: HDR passthrough: {}",
+-              m_passthroughHDR ? "on" : "off");
+-  }
++  m_passthroughHDR = CServiceBroker::GetWinSystem()->SetHDR(&picture);
++  CLog::Log(LOGDEBUG, "LinuxRendererGLES::Configure: HDR passthrough: {}",
++            m_passthroughHDR ? "on" : "off");
+ 
+   return true;
+ }
