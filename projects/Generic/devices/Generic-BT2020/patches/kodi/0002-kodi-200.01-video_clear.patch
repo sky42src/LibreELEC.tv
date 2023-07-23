@@ -1,0 +1,25 @@
+From 3ac2b8d4ff6741d29bb73a7874f1fda6a0c660b5 Mon Sep 17 00:00:00 2001
+From: sarbes <sarbes@kodi.tv>
+Date: Sun, 12 Mar 2023 13:48:45 +0100
+Subject: [PATCH] Force screen clear when playing a video on GLES
+
+---
+ xbmc/video/windows/GUIWindowFullScreen.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/xbmc/video/windows/GUIWindowFullScreen.cpp b/xbmc/video/windows/GUIWindowFullScreen.cpp
+index 7cebc5fa07..7e139fd22b 100644
+--- a/xbmc/video/windows/GUIWindowFullScreen.cpp
++++ b/xbmc/video/windows/GUIWindowFullScreen.cpp
+@@ -180,6 +180,8 @@ void CGUIWindowFullScreen::ClearBackground()
+   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+   if (appPlayer->IsRenderingVideoLayer())
+     CServiceBroker::GetWinSystem()->GetGfxContext().Clear(0);
++  else
++    CServiceBroker::GetWinSystem()->GetGfxContext().Clear(0xff000000);
+ }
+ 
+ void CGUIWindowFullScreen::OnWindowLoaded()
+-- 
+2.39.2
+
