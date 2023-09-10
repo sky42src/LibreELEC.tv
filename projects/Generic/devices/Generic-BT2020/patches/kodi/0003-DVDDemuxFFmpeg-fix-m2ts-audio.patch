@@ -1,0 +1,38 @@
+# hint from smp
+# Btw there is one more useful patch
+# https://forum.kodi.tv/showthread.php?tid=371773&pid=3144926#pid3144926
+# It fixes audio in m2ts files.
+#
+diff -Naur kodi-6c9991b8615b04c43b80f16e4335881f4fa06a5e/xbmc/cores/VideoPlayer/DVDDemuxers/DVDDemuxFFmpeg.cpp kodi-6c9991b8615b04c43b80f16e4335881f4fa06a5e-fix-m2ts-audio/xbmc/cores/VideoPlayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
+--- kodi-6c9991b8615b04c43b80f16e4335881f4fa06a5e/xbmc/cores/VideoPlayer/DVDDemuxers/DVDDemuxFFmpeg.cpp	2023-08-29 08:25:43.000000000 +0200
++++ kodi-6c9991b8615b04c43b80f16e4335881f4fa06a5e-fix-m2ts-audio/xbmc/cores/VideoPlayer/DVDDemuxers/DVDDemuxFFmpeg.cpp	2023-09-10 16:11:48.148993967 +0200
+@@ -527,29 +527,6 @@
+                          "empty. Please report this bug.");
+   }
+ 
+-  // don't re-open mpegts streams with hevc encoding as the params are not correctly detected again
+-  if (iformat && (strcmp(iformat->name, "mpegts") == 0) && !fileinfo && !isBluray &&
+-      m_pFormatContext->nb_streams > 0 && m_pFormatContext->streams != nullptr &&
+-      m_pFormatContext->streams[0]->codecpar->codec_id != AV_CODEC_ID_HEVC)
+-  {
+-    av_opt_set_int(m_pFormatContext, "analyzeduration", 500000, 0);
+-    m_checkTransportStream = true;
+-    skipCreateStreams = true;
+-  }
+-  else if (!iformat || ((strcmp(iformat->name, "mpegts") != 0) ||
+-                        ((strcmp(iformat->name, "mpegts") == 0) &&
+-                         m_pFormatContext->nb_streams > 0 && m_pFormatContext->streams != nullptr &&
+-                         m_pFormatContext->streams[0]->codecpar->codec_id == AV_CODEC_ID_HEVC)))
+-  {
+-    m_streaminfo = true;
+-  }
+-
+-  if (iformat && (strcmp(iformat->name, "mov,mp4,m4a,3gp,3g2,mj2") == 0))
+-  {
+-    if (URIUtils::IsRemote(strFile))
+-      m_pFormatContext->iformat->flags |= AVFMT_NOGENSEARCH;
+-  }
+-
+   // we need to know if this is matroska, avi or sup later
+   m_bMatroska = strncmp(m_pFormatContext->iformat->name, "matroska", 8) == 0;	// for "matroska.webm"
+   m_bAVI = strcmp(m_pFormatContext->iformat->name, "avi") == 0;
