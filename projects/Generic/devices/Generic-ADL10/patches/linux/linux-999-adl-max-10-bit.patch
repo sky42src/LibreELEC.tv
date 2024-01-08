@@ -1,0 +1,13 @@
+diff --git a/drivers/gpu/drm/i915/display/intel_hdmi.c b/drivers/gpu/drm/i915/display/intel_hdmi.c
+index bc97591..3da321f 100644
+--- a/drivers/gpu/drm/i915/display/intel_hdmi.c
++++ b/drivers/gpu/drm/i915/display/intel_hdmi.c
+@@ -1895,7 +1895,7 @@ static bool intel_hdmi_source_bpc_possible(struct drm_i915_private *i915, int bp
+ {
+ 	switch (bpc) {
+ 	case 12:
+-		return !HAS_GMCH(i915);
++		return !HAS_GMCH(i915) && DISPLAY_VER(i915) <= 10;
+ 	case 10:
+ 		return DISPLAY_VER(i915) >= 11;
+ 	case 8:
