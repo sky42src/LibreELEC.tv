@@ -46,9 +46,9 @@ listcontains "${GRAPHIC_DRIVERS}" "etnaviv" &&
   PKG_MESON_OPTS_TARGET+=" -Detnaviv=enabled" || PKG_MESON_OPTS_TARGET+=" -Detnaviv=disabled"
 
 post_makeinstall_target() {
-  # Remove all test programs installed by install-test-programs=true except modetest
+  # Remove all test programs installed by install-test-programs=true except modetest, modeprint and proptest
   for PKG_LIBDRM_TEST in \
-    drmdevice modeprint proptest vbltest
+    drmdevice vbltest
   do
     safe_remove ${INSTALL}/usr/bin/${PKG_LIBDRM_TEST}
   done
