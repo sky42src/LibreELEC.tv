@@ -1,0 +1,13 @@
+diff --git a/xbmc/platform/posix/PosixMountProvider.cpp b/xbmc/platform/posix/PosixMountProvider.cpp
+index d139be1827..9cade05ee9 100644
+--- a/xbmc/platform/posix/PosixMountProvider.cpp
++++ b/xbmc/platform/posix/PosixMountProvider.cpp
+@@ -94,7 +94,7 @@ std::vector<std::string> CPosixMountProvider::GetDiskUsage()
+   FILE* pipe = popen("df -h", "r");
+ #endif
+ 
+-  static const char* excludes[] = {"rootfs","devtmpfs","tmpfs","none","/dev/loop", "udev", NULL};
++  static const char* excludes[] = {"rootfs","devtmpfs","tmpfs","systemd-1","none","/dev/loop", "udev", NULL};
+ 
+   if (pipe)
+   {
