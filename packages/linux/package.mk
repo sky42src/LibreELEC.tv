@@ -29,9 +29,9 @@ case "${LINUX}" in
     PKG_SOURCE_NAME="linux-${LINUX}-${PKG_VERSION}.tar.gz"
     ;;
   *)
-    PKG_VERSION="6.6.14"
-    PKG_SHA256="fbe96b2db3f962cd2a96a849d554300e7a4555995160082d4f323c2a1dfa1584"
-    PKG_URL="https://www.kernel.org/pub/linux/kernel/v${PKG_VERSION/.*/}.x/${PKG_NAME}-${PKG_VERSION}.tar.xz"
+    PKG_VERSION="b1651bcc3e78d3eca42061e8cf6bf1fea6843026"
+    PKG_SHA256="44b4c83ac82c13e7beef7a605a95ca54ac3773ba6213dfcd4dd2d5fda83a2eb3"
+    PKG_URL="https://gitlab.com/freedesktop-mirror/drm-tip/-/archive/drm-tip/drm-tip-drm-tip.tar.bz2"
     PKG_PATCH_DIRS="default"
     ;;
 esac
