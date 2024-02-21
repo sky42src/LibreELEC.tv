@@ -1,0 +1,73 @@
+From 00dc043698606404cc47a2c4b1cfc28e9d6a916f Mon Sep 17 00:00:00 2001
+From: fritsch <Peter.Fruehberger@gmail.com>
+Date: Tue, 20 Feb 2024 21:22:51 +0100
+Subject: [PATCH 1/2] AESinkPipewire: Properly identify HDMI devices
+
+Without this AE would only allow passthrough on SPDIF devices as it checks
+for the device not being PCM when allowing Passthrough.
+
+Co-authored-by: Lukas Rusak <lorusak@gmail.com>
+---
+ .../AudioEngine/Sinks/pipewire/AESinkPipewire.cpp     | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/xbmc/cores/AudioEngine/Sinks/pipewire/AESinkPipewire.cpp b/xbmc/cores/AudioEngine/Sinks/pipewire/AESinkPipewire.cpp
+index 0b76c339de24d..062676a16ef3e 100644
+--- a/xbmc/cores/AudioEngine/Sinks/pipewire/AESinkPipewire.cpp
++++ b/xbmc/cores/AudioEngine/Sinks/pipewire/AESinkPipewire.cpp
+@@ -348,10 +348,17 @@ void CAESinkPipewire::EnumerateDevicesEx(AEDeviceInfoList& list, bool force)
+                                   streamTypes.end());
+     }
+ 
+-    if (device.m_channels.Count() == 2 && !device.m_streamTypes.empty())
++    if (!device.m_streamTypes.empty())
+     {
+-      device.m_deviceType = AE_DEVTYPE_IEC958;
+       device.m_dataFormats.emplace_back(AE_FMT_RAW);
++      if (device.m_channels.Count() == 2)
++      {
++        device.m_deviceType = AE_DEVTYPE_IEC958;
++      }
++      else
++      {
++        device.m_deviceType = AE_DEVTYPE_HDMI;
++      }
+     }
+ 
+     list.emplace_back(device);
+
+From 717e4bfb3104b7fbca3ff6cd9427265c58759007 Mon Sep 17 00:00:00 2001
+From: fritsch <Peter.Fruehberger@gmail.com>
+Date: Wed, 21 Feb 2024 06:01:13 +0100
+Subject: [PATCH 2/2] AESinkPipewire: Fix Passthrough channel availability
+
+It seems the Pipewire can easily configure TrueHD as IEC Format while
+only two channels are available. This is not correct. As later on when AE
+starts playing 8 channels are opened, already enumerate properly.
+---
+ xbmc/cores/AudioEngine/Sinks/pipewire/AESinkPipewire.cpp | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/xbmc/cores/AudioEngine/Sinks/pipewire/AESinkPipewire.cpp b/xbmc/cores/AudioEngine/Sinks/pipewire/AESinkPipewire.cpp
+index 062676a16ef3e..3204b6f3c0b88 100644
+--- a/xbmc/cores/AudioEngine/Sinks/pipewire/AESinkPipewire.cpp
++++ b/xbmc/cores/AudioEngine/Sinks/pipewire/AESinkPipewire.cpp
+@@ -348,10 +348,17 @@ void CAESinkPipewire::EnumerateDevicesEx(AEDeviceInfoList& list, bool force)
+                                   streamTypes.end());
+     }
+ 
++    // If DTS-HD-MA or TrueHD are configured 8 channels are needed
++    bool hasHBRFormat = false;
++    AEDataTypeList::iterator iit, iit2;
++    iit = find(device.m_streamTypes.begin(), device.m_streamTypes.end(), CAEStreamInfo::STREAM_TYPE_TRUEHD);
++    iit2 = find(device.m_streamTypes.begin(), device.m_streamTypes.end(), CAEStreamInfo::STREAM_TYPE_DTSHD_MA);
++    hasHBRFormat = (iit != device.m_streamTypes.end()) || (iit2 != device.m_streamTypes.end());
++
+     if (!device.m_streamTypes.empty())
+     {
+       device.m_dataFormats.emplace_back(AE_FMT_RAW);
+-      if (device.m_channels.Count() == 2)
++      if (!hasHBRFormat && device.m_channels.Count() == 2)
+       {
+         device.m_deviceType = AE_DEVTYPE_IEC958;
+       }
