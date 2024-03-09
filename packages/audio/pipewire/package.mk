@@ -93,6 +93,9 @@ post_install() {
   mkdir -p $INSTALL/etc
   ln -s /storage/.config/pipewire $INSTALL/etc/pipewire
 
-  enable_service pipewire.socket
-  enable_service pipewire.service
+  # enable only if pipewire is the only enabled audio backend
+  if [ "${KODI_PIPEWIRE_SUPPORT}" = "yes" -a "${KODI_PULSEAUDIO_SUPPORT}" != "yes" -a "${KODI_ALSA_SUPPORT}" != "yes" ]; then
+    enable_service pipewire.socket
+    enable_service pipewire.service
+  fi
 }
