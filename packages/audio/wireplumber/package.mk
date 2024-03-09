@@ -44,5 +44,16 @@ EOF
 }
 
 post_install() {
+  # config dir in /storage/.config/
+  mkdir -p $INSTALL/usr/config/wireplumber \
+    $INSTALL/usr/config/wireplumber/bluetooth.lua.d \
+    $INSTALL/usr/config/wireplumber/common \
+    $INSTALL/usr/config/wireplumber/main.lua.d \
+    $INSTALL/usr/config/wireplumber/policy.lua.d
+
+  # symlink for config
+  mkdir -p $INSTALL/etc
+  ln -s /storage/.config/wireplumber $INSTALL/etc/wireplumber
+
   enable_service wireplumber.service
 }
