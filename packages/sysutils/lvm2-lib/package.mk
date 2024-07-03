@@ -51,6 +51,11 @@ PKG_CONFIGURE_OPTS_TARGET="$LVM2_CONFIG_DEFAULT \
                          --disable-fsadm \
                          --disable-nls"
 
+# fix modprobe in config.status
+post_configure_target() {
+  sed -i -E 's|/.*bin/modprobe|/usr/sbin/modprobe|g' ${PKG_REAL_BUILD}/config.status ${PKG_REAL_BUILD}/include/configure.h
+}
+
 # we want just libdevmapper
 post_makeinstall_target() {
 

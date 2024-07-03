@@ -49,6 +49,11 @@ PKG_CONFIGURE_OPTS_TARGET="$LVM2_CONFIG_DEFAULT \
                            --with-tmpfilesdir=/usr/lib/tmpfiles.d"
 
 
+# fix modprobe in config.status
+post_configure_target() {
+  sed -i -E 's|/.*bin/modprobe|/usr/sbin/modprobe|g' ${PKG_REAL_BUILD}/config.status ${PKG_REAL_BUILD}/include/configure.h
+}
+
 post_makeinstall_target() {
   # more install targets
   make install_system_dirs DESTDIR=$INSTALL
