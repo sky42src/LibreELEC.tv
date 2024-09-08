@@ -816,6 +816,10 @@ load_build_config() {
 save_build_config() {
   local var
   mkdir -p ${BUILD}
+  echo "Signature: 8a477f597d28d172789f06886806bc55" > ${BUILD}/CACHEDIR.TAG
+  echo "# This file is a cache directory tag created by the LE build system " >> ${BUILD}/CACHEDIR.TAG
+  echo "# For information about cache directory tags, see: " >> ${BUILD}/CACHEDIR.TAG
+  echo "#       http://www.brynosaurus.com/cachedir/ " >> ${BUILD}/CACHEDIR.TAG
   rm -f ${BUILD}/.build.conf
   for var in PROJECT DEVICE ARCH DEBUG BUILD_SUFFIX; do
     echo "export ${var}=\"${!var}\"" >> ${BUILD}/.build.conf
