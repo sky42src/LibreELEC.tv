@@ -72,3 +72,9 @@
 
   # Default size of the ova image, in MB, eg. 4096
     OVA_SIZE="4096"
+
+  # new branch LE12 with kernel 6.10 from master
+    BUILD_KERNEL=6.10
+    BUILD_SUFFIX=${BUILD_KERNEL}
+    IMAGE_SUFFIX=${IMAGE_SUFFIX:-kernel-${BUILD_KERNEL}}
+    DRIVER_ADDONS_SUPPORT="no"
