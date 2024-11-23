@@ -2,9 +2,27 @@
 
 LibreELEC is a 'Just enough OS' Linux distribution for the award-winning [Kodi](https://kodi.tv) software on popular mediacentre hardware. Further information on the project can be found on the [LibreELEC website](https://libreelec.tv).
 
+**Features added in this Community Build**
+
+- no GUI tools for the encryptiom, lvm2 or mdraid
+- kernel config for dm-crypt to use cryptsetup (compatible with luks, veracrypt, truecrypt, bitlcoker)
+- kernel config for more crypto modules and options
+- kernel config for ext4 filesystem encryption
+- kernel config for lvm2 and snapshots (no cache, no thin)
+- kernel config for software raid with lvm2 and standalone with mdraid
+- cryptsetup-2.6.1, lvm2-2.03.16, fscryptctl-1.1.0, mdadm-4.2
+- lvm2 tools (config is under /storage/.config/lvm)
+- mdraid to control linux software raid
+- cryptsetup to manage encrypted block devices with luks, veracrypt and some more
+- fscryptctl to manage ext4 encryption
+- systemd with /etc/crypttab support
+- Generic: added intel-gpu-max-10-bit.sh helper
+- curl: enable protocol support for scp, sftp, smb, smbs
+- /flash 1024MB
+
 **Issues & Support**
 
-Please ask questions in the [LibreELEC forum: Help & Support](https://forum.libreelec.tv/forum-3.html) or ask a member of project staff in the #libreelec IRC channel on Libera.Chat. Please report bugs via [GitHub Issues](https://github.com/LibreELEC/LibreELEC.tv/issues).
+If you have any problems please install [nightly LibreELEC](https://test.libreelec.tv/12.0/) and test again. If the problem is the same it is most likely not my build. If you have trouble with features added by me please ask in the forum thread [LE 12.0 added lvm2, luks (dm-crypt, veracrypt), mdraid, ext4 encryption](https://forum.libreelec.tv/thread/27952-le-12-0-added-lvm2-luks-dm-crypt-veracrypt-mdraid-ext4-encryption/).
 
 **Donations**
 
