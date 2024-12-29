@@ -1,5 +1,5 @@
 diff --git a/xbmc/utils/EGLFence.cpp b/xbmc/utils/EGLFence.cpp
-index 9d0065bdaf..535e3bce31 100644
+index 58a9ec1683..535e3bce31 100644
 --- a/xbmc/utils/EGLFence.cpp
 +++ b/xbmc/utils/EGLFence.cpp
 @@ -22,14 +22,6 @@ CEGLFence::CEGLFence(EGLDisplay display)
@@ -17,7 +17,7 @@ index 9d0065bdaf..535e3bce31 100644
  }
  
  void CEGLFence::CreateFence()
-@@ -79,65 +71,3 @@ bool CEGLFence::IsSignaled()
+@@ -79,61 +71,3 @@ bool CEGLFence::IsSignaled()
  
    return false;
  }
@@ -75,12 +75,8 @@ index 9d0065bdaf..535e3bce31 100644
 -  if (!m_kmsFence)
 -    return;
 -
--  EGLint status{EGL_FALSE};
--
--  while (status != EGL_CONDITION_SATISFIED_KHR)
--    status = m_eglClientWaitSyncKHR(m_display, m_kmsFence, 0, EGL_FOREVER_KHR);
--
--  m_eglDestroySyncKHR(m_display, m_kmsFence);
+-  if (m_eglClientWaitSyncKHR(m_display, m_kmsFence, 0, EGL_FOREVER_KHR) != EGL_FALSE)
+-    m_eglDestroySyncKHR(m_display, m_kmsFence);
 -}
 -#endif
 diff --git a/xbmc/utils/EGLFence.h b/xbmc/utils/EGLFence.h
@@ -121,7 +117,7 @@ index 03c246b60b..bd96444e47 100644
  
  }
 diff --git a/xbmc/windowing/gbm/WinSystemGbm.cpp b/xbmc/windowing/gbm/WinSystemGbm.cpp
-index f334156d89..34c8c16fe4 100644
+index 72497a2156..ba472fc290 100644
 --- a/xbmc/windowing/gbm/WinSystemGbm.cpp
 +++ b/xbmc/windowing/gbm/WinSystemGbm.cpp
 @@ -278,7 +278,7 @@ void CWinSystemGbm::UpdateDisplayHardwareScaling(const RESOLUTION_INFO& resInfo)
@@ -134,7 +130,7 @@ index f334156d89..34c8c16fe4 100644
    if (m_videoLayerBridge && !videoLayer)
    {
 @@ -293,7 +293,7 @@ void CWinSystemGbm::FlipPage(bool rendered, bool videoLayer, bool async)
-     bo = m_GBM->GetDevice()->GetSurface()->LockFrontBuffer()->Get();
+     bo = m_GBM->GetDevice().GetSurface().LockFrontBuffer().Get();
    }
  
 -  m_DRM->FlipPage(bo, rendered, videoLayer, async);
@@ -160,7 +156,7 @@ index f334156d89..34c8c16fe4 100644
  }
  
 diff --git a/xbmc/windowing/gbm/WinSystemGbm.h b/xbmc/windowing/gbm/WinSystemGbm.h
-index 879d0f58f8..a800acef6b 100644
+index 9609675d72..8993b6d278 100644
 --- a/xbmc/windowing/gbm/WinSystemGbm.h
 +++ b/xbmc/windowing/gbm/WinSystemGbm.h
 @@ -49,7 +49,7 @@ public:
@@ -173,7 +169,7 @@ index 879d0f58f8..a800acef6b 100644
    bool CanDoWindowed() override { return false; }
    void UpdateResolutions() override;
 diff --git a/xbmc/windowing/gbm/WinSystemGbmEGLContext.cpp b/xbmc/windowing/gbm/WinSystemGbmEGLContext.cpp
-index ee27fba1bd..83a59413f7 100644
+index fac914d5e9..2fb742efed 100644
 --- a/xbmc/windowing/gbm/WinSystemGbmEGLContext.cpp
 +++ b/xbmc/windowing/gbm/WinSystemGbmEGLContext.cpp
 @@ -58,17 +58,6 @@ bool CWinSystemGbmEGLContext::InitWindowSystemEGL(EGLint renderableType, EGLint
@@ -303,7 +299,7 @@ index ad80abf46c..0d071c31f1 100644
      if (m_dispReset && m_dispResetTimer.IsTimePast())
      {
 diff --git a/xbmc/windowing/gbm/drm/DRMAtomic.cpp b/xbmc/windowing/gbm/drm/DRMAtomic.cpp
-index ff7f137d60..029b5cae81 100644
+index 70ae92e948..3ae5211cfb 100644
 --- a/xbmc/windowing/gbm/drm/DRMAtomic.cpp
 +++ b/xbmc/windowing/gbm/drm/DRMAtomic.cpp
 @@ -111,11 +111,6 @@ void CDRMAtomic::DrmAtomicCommit(int fb_id, int flags, bool rendered, bool video
@@ -318,8 +314,8 @@ index ff7f137d60..029b5cae81 100644
    }
    else if (videoLayer && !CServiceBroker::GetGUI()->GetWindowManager().HasVisibleControls())
    {
-@@ -151,12 +146,6 @@ void CDRMAtomic::DrmAtomicCommit(int fb_id, int flags, bool rendered, bool video
-               strerror(errno));
+@@ -156,12 +151,6 @@ void CDRMAtomic::DrmAtomicCommit(int fb_id, int flags, bool rendered, bool video
+     m_atomicRequestQueue.pop_front();
    }
  
 -  if (m_inFenceFd != -1)
@@ -331,7 +327,7 @@ index ff7f137d60..029b5cae81 100644
    if (flags & DRM_MODE_ATOMIC_ALLOW_MODESET)
    {
      if (drmModeDestroyPropertyBlob(m_fd, blob_id) != 0)
-@@ -171,10 +160,9 @@ void CDRMAtomic::DrmAtomicCommit(int fb_id, int flags, bool rendered, bool video
+@@ -173,10 +162,9 @@ void CDRMAtomic::DrmAtomicCommit(int fb_id, int flags, bool rendered, bool video
    m_req = m_atomicRequestQueue.back().get();
  }
  
@@ -343,7 +339,7 @@ index ff7f137d60..029b5cae81 100644
  
    if (rendered)
    {
-@@ -189,11 +177,10 @@ void CDRMAtomic::FlipPage(struct gbm_bo* bo, bool rendered, bool videoLayer, boo
+@@ -191,11 +179,10 @@ void CDRMAtomic::FlipPage(struct gbm_bo* bo, bool rendered, bool videoLayer, boo
        CLog::Log(LOGERROR, "CDRMAtomic::{} - Failed to get a new FBO", __FUNCTION__);
        return;
      }
