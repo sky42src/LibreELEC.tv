@@ -20,7 +20,7 @@ FHS=${WHERE%/scripts/sky42/kodi}
 if [ $# -gt 0 ]; then
   B42="$@"
 else
-  B42="b 4 5"
+  B42="x 4 5"
 fi
 
 set -x
