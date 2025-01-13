@@ -1,0 +1,49 @@
+commit d2e5b514d63e20abfd5c61372bf44f0fce1bfa16
+Author: Peter Tuschy <sky42+git@mailbox.org>
+Date:   Mon Jan 13 16:01:49 2025 +0100
+
+    ZoomHack: Zoom -> 200%
+
+diff --git a/addons/resource.language.en_gb/resources/strings.po b/addons/resource.language.en_gb/resources/strings.po
+index fe749f937b..2431e2d8fa 100644
+--- a/addons/resource.language.en_gb/resources/strings.po
++++ b/addons/resource.language.en_gb/resources/strings.po
+@@ -2958,7 +2958,7 @@ msgstr ""
+ #: system/settings/settings.xml
+ #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
+ msgctxt "#631"
+-msgid "Zoom"
++msgid "Zoom - 200%"
+ msgstr ""
+ 
+ #. Label for stretching the displayed video to a 4:3 aspect ratio
+diff --git a/xbmc/cores/VideoPlayer/VideoRenderers/BaseRenderer.cpp b/xbmc/cores/VideoPlayer/VideoRenderers/BaseRenderer.cpp
+index 3c09cddc6b..25b4b05dd6 100644
+--- a/xbmc/cores/VideoPlayer/VideoRenderers/BaseRenderer.cpp
++++ b/xbmc/cores/VideoPlayer/VideoRenderers/BaseRenderer.cpp
+@@ -404,22 +404,10 @@ void CBaseRenderer::SetViewMode(int viewMode)
+   CDisplaySettings::GetInstance().SetVerticalShift(0.0f);
+   CDisplaySettings::GetInstance().SetNonLinearStretched(false);
+ 
+-  if (m_videoSettings.m_ViewMode == ViewModeZoom ||
+-       (is43 && CServiceBroker::GetSettingsComponent()->GetSettings()->GetInt(CSettings::SETTING_VIDEOPLAYER_STRETCH43) == ViewModeZoom))
+-  { // zoom image so no black bars
++  if (m_videoSettings.m_ViewMode == ViewModeZoom)
++  { // 200%
+     CDisplaySettings::GetInstance().SetPixelRatio(1.0);
+-    // calculate the desired output ratio
+-    float outputFrameRatio = sourceFrameRatio * CDisplaySettings::GetInstance().GetPixelRatio() / info.fPixelRatio;
+-    // now calculate the correct zoom amount.  First zoom to full height.
+-    float newHeight = screenHeight;
+-    float newWidth = newHeight * outputFrameRatio;
+-    CDisplaySettings::GetInstance().SetZoomAmount(newWidth / screenWidth);
+-    if (newWidth < screenWidth)
+-    { // zoom to full width
+-      newWidth = screenWidth;
+-      newHeight = newWidth / outputFrameRatio;
+-      CDisplaySettings::GetInstance().SetZoomAmount(newHeight / screenHeight);
+-    }
++    CDisplaySettings::GetInstance().SetZoomAmount(2.0);
+   }
+   else if (m_videoSettings.m_ViewMode == ViewModeStretch4x3)
+   { // stretch image to 4:3 ratio

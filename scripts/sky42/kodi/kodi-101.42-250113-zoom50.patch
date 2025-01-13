@@ -1,0 +1,90 @@
+commit 083e706f6a948949c1a1b4d68262496bd6ad42eb
+Author: Peter Tuschy <sky42+git@mailbox.org>
+Date:   Mon Jan 13 15:44:11 2025 +0100
+
+    ZoomHack: Zoom120Width -> 50%
+
+diff --git a/addons/resource.language.en_gb/resources/strings.po b/addons/resource.language.en_gb/resources/strings.po
+index e7817e5dbc..6edb29aa21 100644
+--- a/addons/resource.language.en_gb/resources/strings.po
++++ b/addons/resource.language.en_gb/resources/strings.po
+@@ -23118,7 +23118,7 @@ msgstr ""
+ 
+ #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
+ msgctxt "#39008"
+-msgid "Zoom - 120% width"
++msgid "Zoom - 50%"
+ msgstr ""
+ 
+ #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
+diff --git a/xbmc/cores/VideoPlayer/VideoRenderers/BaseRenderer.cpp b/xbmc/cores/VideoPlayer/VideoRenderers/BaseRenderer.cpp
+index a451bc4be7..ed4124c4b6 100644
+--- a/xbmc/cores/VideoPlayer/VideoRenderers/BaseRenderer.cpp
++++ b/xbmc/cores/VideoPlayer/VideoRenderers/BaseRenderer.cpp
+@@ -472,11 +472,10 @@ void CBaseRenderer::SetViewMode(int viewMode)
+     CDisplaySettings::GetInstance().SetNonLinearStretched(m_videoSettings.m_CustomNonLinStretch);
+     CDisplaySettings::GetInstance().SetVerticalShift(m_videoSettings.m_CustomVerticalShift);
+   }
+-  else if (m_videoSettings.m_ViewMode == ViewModeZoom120Width)
++  else if (m_videoSettings.m_ViewMode == ViewModeZoom50)
+   {
+-    float fitHeightZoom = sourceFrameRatio * screenHeight / (info.fPixelRatio * screenWidth);
+-    CDisplaySettings::GetInstance().SetPixelRatio(1.0f);
+-    CDisplaySettings::GetInstance().SetZoomAmount(fitHeightZoom < 1.0f ? 1.0f : (fitHeightZoom > 1.2f ? 1.2f : fitHeightZoom));
++    CDisplaySettings::GetInstance().SetPixelRatio(1.0);
++    CDisplaySettings::GetInstance().SetZoomAmount(0.5);
+   }
+   else if (m_videoSettings.m_ViewMode == ViewModeZoom110Width)
+   {
+diff --git a/xbmc/cores/VideoSettings.h b/xbmc/cores/VideoSettings.h
+index a7135da5d8..d544c1bcc0 100644
+--- a/xbmc/cores/VideoSettings.h
++++ b/xbmc/cores/VideoSettings.h
+@@ -187,7 +187,7 @@ enum ViewMode
+   ViewModeOriginal,
+   ViewModeCustom,
+   ViewModeStretch16x9Nonlin,
+-  ViewModeZoom120Width,
++  ViewModeZoom50,
+   ViewModeZoom110Width
+ };
+ 
+diff --git a/xbmc/interfaces/json-rpc/PlayerOperations.cpp b/xbmc/interfaces/json-rpc/PlayerOperations.cpp
+index 5029549541..6d7541cf42 100644
+--- a/xbmc/interfaces/json-rpc/PlayerOperations.cpp
++++ b/xbmc/interfaces/json-rpc/PlayerOperations.cpp
+@@ -648,7 +648,7 @@ std::map<std::string, ViewMode> viewModes =
+   {"stretch16x9", ViewModeStretch16x9},
+   {"original", ViewModeOriginal},
+   {"stretch16x9nonlin", ViewModeStretch16x9Nonlin},
+-  {"zoom120width", ViewModeZoom120Width},
++  {"zoom50", ViewModeZoom50},
+   {"zoom110width", ViewModeZoom110Width}
+ };
+ 
+diff --git a/xbmc/interfaces/json-rpc/schema/types.json b/xbmc/interfaces/json-rpc/schema/types.json
+index 4c67f7c35e..2c020c6355 100644
+--- a/xbmc/interfaces/json-rpc/schema/types.json
++++ b/xbmc/interfaces/json-rpc/schema/types.json
+@@ -527,7 +527,7 @@
+       "stretch16x9",
+       "original",
+       "stretch16x9nonlin",
+-      "zoom120width",
++      "zoom50",
+       "zoom110width"
+     ]
+   },
+diff --git a/xbmc/video/ViewModeSettings.cpp b/xbmc/video/ViewModeSettings.cpp
+index 6c8a91976e..f728f3d022 100644
+--- a/xbmc/video/ViewModeSettings.cpp
++++ b/xbmc/video/ViewModeSettings.cpp
+@@ -28,7 +28,7 @@ static const ViewModeProperties viewModes[] =
+ {
+   { 630,   ViewModeNormal },
+   { 631,   ViewModeZoom },
+-  { 39008, ViewModeZoom120Width },
++  { 39008, ViewModeZoom50 },
+   { 39009, ViewModeZoom110Width },
+   { 632,   ViewModeStretch4x3 },
+   { 633,   ViewModeWideZoom },
