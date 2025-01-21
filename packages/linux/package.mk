@@ -29,10 +29,10 @@ case "${LINUX}" in
     PKG_SOURCE_NAME="linux-${LINUX}-${PKG_VERSION}.tar.gz"
     ;;
   *)
-    PKG_VERSION="6.6.86"
-    PKG_SHA256="49e3ad7423e40735faada0cd39665c071d47efd84ec3548acf119c9704f13e68"
+    PKG_VERSION="6.12.23"
+    PKG_SHA256="d8d95404f8deeb7ff6992c0df855025062e9e8182bca6daa27ef2e9275d27749"
     PKG_URL="https://www.kernel.org/pub/linux/kernel/v${PKG_VERSION/.*/}.x/${PKG_NAME}-${PKG_VERSION}.tar.xz"
-    PKG_PATCH_DIRS="default"
+    PKG_PATCH_DIRS="default default-before-6.14 rtlwifi/6.13 rtlwifi/6.14 rtlwifi/after-6.14"
     ;;
 esac
 
