@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="kernel-firmware"
-PKG_VERSION="20240312"
-PKG_SHA256="b2327a54ad1897c828008caf63af5ee15469ba723a5016be58f2b44f07bd4b94"
+PKG_VERSION="20250410"
+PKG_SHA256="2ae6aab2d8930fd54bf30ae15498f1625721bc3630b894644db5d21fad5a20f9"
 PKG_LICENSE="other"
 PKG_SITE="https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/"
 PKG_URL="https://cdn.kernel.org/pub/linux/kernel/firmware/linux-firmware-${PKG_VERSION}.tar.xz"
@@ -18,6 +18,10 @@ configure_package() {
 post_patch() {
   (
     cd ${PKG_BUILD}
+
+    # Do not run check_whence.py against the copied firmware
+    echo '#!/usr/bin/python3' > check_whence.py
+
     mkdir -p "${PKG_FW_SOURCE}"
       ./copy-firmware.sh --verbose "${PKG_FW_SOURCE}"
   )
@@ -57,15 +61,15 @@ makeinstall_target() {
           echo "ERROR: Firmware file ${fwfile} does not exist - aborting"
           exit 1
         fi
-      done <<< "$(cd ${PKG_FW_SOURCE} && eval "find "${fwline}"")"
-    done < "${fwlist}"
+      done <<<"$(cd ${PKG_FW_SOURCE} && eval "find "${fwline}"")"
+    done <"${fwlist}"
   done
 
   PKG_KERNEL_CFG_FILE=$(kernel_config_path) || die
 
   # The following files are RPi specific and installed by brcmfmac_sdio-firmware-rpi instead.
   # They are also not required at all if the kernel is not suitably configured.
-  if listcontains "${FIRMWARE}" "brcmfmac_sdio-firmware-rpi" || \
+  if listcontains "${FIRMWARE}" "brcmfmac_sdio-firmware-rpi" ||
      ! grep -q "^CONFIG_BRCMFMAC_SDIO=y" ${PKG_KERNEL_CFG_FILE}; then
     rm -fr ${FW_TARGET_DIR}/brcm/brcmfmac43430*-sdio.*
     rm -fr ${FW_TARGET_DIR}/brcm/brcmfmac43455*-sdio.*
@@ -73,12 +77,6 @@ makeinstall_target() {
 
   # brcm pcie firmware is only needed by x86_64
   [ "${TARGET_ARCH}" != "x86_64" ] && rm -fr ${FW_TARGET_DIR}/brcm/*-pcie.*
-
-  # Upstream doesn't name the file correctly so we need to symlink it
-  if [ -f "${FW_TARGET_DIR}/rtl_bt/rtl8723bs_config-OBDA8723.bin" ]; then
-    #cd "${FW_TARGET_DIR}/rtl_bt"
-    ln -s "rtl8723bs_config-OBDA8723.bin" "${FW_TARGET_DIR}/rtl_bt/rtl8723bs_config.bin"
-  fi
 
   # Cleanup - which may be project or device specific
   find_file_path scripts/cleanup.sh && ${FOUND_PATH} ${FW_TARGET_DIR} || true
