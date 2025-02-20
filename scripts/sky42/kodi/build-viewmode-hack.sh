@@ -27,7 +27,7 @@ set -x
 
 cd "${FHS}" || exit $?
 
-cp scripts/sky42/kodi/kodi-100.42-viewmodes-250113.patch packages/mediacenter/kodi/patches/ || exit $?
+cp scripts/sky42/kodi/kodi-10[1-9].42-*.patch packages/mediacenter/kodi/patches/ || exit $?
 sed -i -E 's|(BUILDER_VERSION="[0-9]{6})"$|\1z"|' distributions/LibreELEC/version || exit $?
 
 # b42 is my build wrapper script (in this case for Generic-BT2020, RPi4, RPi5 as they are my main devices)

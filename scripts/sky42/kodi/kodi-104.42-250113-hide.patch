@@ -1,0 +1,29 @@
+commit e385f61d1245bd2b8fac3e9434a516fd61bc384f
+Author: Peter Tuschy <sky42+git@mailbox.org>
+Date:   Mon Jan 13 16:06:23 2025 +0100
+
+    ZoomHack: show only modes for this hack
+
+diff --git a/xbmc/video/ViewModeSettings.cpp b/xbmc/video/ViewModeSettings.cpp
+index 0d88ef1539..3b2868489f 100644
+--- a/xbmc/video/ViewModeSettings.cpp
++++ b/xbmc/video/ViewModeSettings.cpp
+@@ -27,14 +27,14 @@ struct ViewModeProperties
+ static const ViewModeProperties viewModes[] =
+ {
+   { 630,   ViewModeNormal },
+-  { 631,   ViewModeZoom },
++  { 631,   ViewModeZoom, HIDE_ITEM },
+   { 39008, ViewModeZoom50 },
+   { 39009, ViewModeZoom33 },
+-  { 632,   ViewModeStretch4x3 },
+-  { 633,   ViewModeWideZoom },
+-  { 634,   ViewModeStretch16x9 },
++  { 632,   ViewModeStretch4x3, HIDE_ITEM, HIDE_ITEM },
++  { 633,   ViewModeWideZoom, HIDE_ITEM, HIDE_ITEM },
++  { 634,   ViewModeStretch16x9, HIDE_ITEM, HIDE_ITEM },
+   { 644,   ViewModeStretch16x9Nonlin, HIDE_ITEM, HIDE_ITEM },
+-  { 635,   ViewModeOriginal },
++  { 635,   ViewModeOriginal, HIDE_ITEM },
+   { 636,   ViewModeCustom, HIDE_ITEM }
+ };
