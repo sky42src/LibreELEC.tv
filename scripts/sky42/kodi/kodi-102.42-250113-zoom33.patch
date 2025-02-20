@@ -1,0 +1,99 @@
+commit 78bc0284d929581e9e300296b51efeb22177b7c6
+Author: Peter Tuschy <sky42+git@mailbox.org>
+Date:   Mon Jan 13 15:52:44 2025 +0100
+
+    ZoomHack: Zoom110Width -> 33%
+
+diff --git a/addons/resource.language.en_gb/resources/strings.po b/addons/resource.language.en_gb/resources/strings.po
+index 6edb29aa21..fe749f937b 100644
+--- a/addons/resource.language.en_gb/resources/strings.po
++++ b/addons/resource.language.en_gb/resources/strings.po
+@@ -23123,7 +23123,7 @@ msgstr ""
+ 
+ #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
+ msgctxt "#39009"
+-msgid "Zoom - 110% width"
++msgid "Zoom - 33%"
+ msgstr ""
+ 
+ #: view/GUIViewState.cpp
+diff --git a/xbmc/cores/VideoPlayer/VideoRenderers/BaseRenderer.cpp b/xbmc/cores/VideoPlayer/VideoRenderers/BaseRenderer.cpp
+index ed4124c4b6..3c09cddc6b 100644
+--- a/xbmc/cores/VideoPlayer/VideoRenderers/BaseRenderer.cpp
++++ b/xbmc/cores/VideoPlayer/VideoRenderers/BaseRenderer.cpp
+@@ -378,7 +378,7 @@ EShaderFormat CBaseRenderer::GetShaderFormat()
+ 
+ void CBaseRenderer::SetViewMode(int viewMode)
+ {
+-  if (viewMode < ViewModeNormal || viewMode > ViewModeZoom110Width)
++  if (viewMode < ViewModeNormal || viewMode > ViewModeZoom33)
+     viewMode = ViewModeNormal;
+ 
+   m_videoSettings.m_ViewMode = viewMode;
+@@ -477,11 +477,10 @@ void CBaseRenderer::SetViewMode(int viewMode)
+     CDisplaySettings::GetInstance().SetPixelRatio(1.0);
+     CDisplaySettings::GetInstance().SetZoomAmount(0.5);
+   }
+-  else if (m_videoSettings.m_ViewMode == ViewModeZoom110Width)
++  else if (m_videoSettings.m_ViewMode == ViewModeZoom33)
+   {
+-    float fitHeightZoom = sourceFrameRatio * screenHeight / (info.fPixelRatio * screenWidth);
+-    CDisplaySettings::GetInstance().SetPixelRatio(1.0f);
+-    CDisplaySettings::GetInstance().SetZoomAmount(fitHeightZoom < 1.0f ? 1.0f : (fitHeightZoom > 1.1f ? 1.1f : fitHeightZoom));
++    CDisplaySettings::GetInstance().SetPixelRatio(1.0);
++    CDisplaySettings::GetInstance().SetZoomAmount(0.333333);
+   }
+   else // if (CMediaSettings::GetInstance().GetCurrentVideoSettings().m_ViewMode == ViewModeNormal)
+   {
+diff --git a/xbmc/cores/VideoSettings.h b/xbmc/cores/VideoSettings.h
+index d544c1bcc0..95c89abc36 100644
+--- a/xbmc/cores/VideoSettings.h
++++ b/xbmc/cores/VideoSettings.h
+@@ -188,7 +188,7 @@ enum ViewMode
+   ViewModeCustom,
+   ViewModeStretch16x9Nonlin,
+   ViewModeZoom50,
+-  ViewModeZoom110Width
++  ViewModeZoom33
+ };
+ 
+ class CVideoSettings
+diff --git a/xbmc/interfaces/json-rpc/PlayerOperations.cpp b/xbmc/interfaces/json-rpc/PlayerOperations.cpp
+index 6d7541cf42..4b50331e29 100644
+--- a/xbmc/interfaces/json-rpc/PlayerOperations.cpp
++++ b/xbmc/interfaces/json-rpc/PlayerOperations.cpp
+@@ -649,7 +649,7 @@ std::map<std::string, ViewMode> viewModes =
+   {"original", ViewModeOriginal},
+   {"stretch16x9nonlin", ViewModeStretch16x9Nonlin},
+   {"zoom50", ViewModeZoom50},
+-  {"zoom110width", ViewModeZoom110Width}
++  {"zoom110width", ViewModeZoom33}
+ };
+ 
+ std::string GetStringFromViewMode(ViewMode viewMode)
+diff --git a/xbmc/settings/MediaSettings.cpp b/xbmc/settings/MediaSettings.cpp
+index 09aad05861..be870164b7 100644
+--- a/xbmc/settings/MediaSettings.cpp
++++ b/xbmc/settings/MediaSettings.cpp
+@@ -85,7 +85,7 @@ bool CMediaSettings::Load(const TiXmlNode *settings)
+       scalingMethod = (int)VS_SCALINGMETHOD_LINEAR;
+     m_defaultVideoSettings.m_ScalingMethod = (ESCALINGMETHOD)scalingMethod;
+ 
+-    XMLUtils::GetInt(pElement, "viewmode", m_defaultVideoSettings.m_ViewMode, ViewModeNormal, ViewModeZoom110Width);
++    XMLUtils::GetInt(pElement, "viewmode", m_defaultVideoSettings.m_ViewMode, ViewModeNormal, ViewModeZoom33);
+     if (!XMLUtils::GetFloat(pElement, "zoomamount", m_defaultVideoSettings.m_CustomZoomAmount, 0.5f, 2.0f))
+       m_defaultVideoSettings.m_CustomZoomAmount = 1.0f;
+     if (!XMLUtils::GetFloat(pElement, "pixelratio", m_defaultVideoSettings.m_CustomPixelRatio, 0.5f, 2.0f))
+diff --git a/xbmc/video/ViewModeSettings.cpp b/xbmc/video/ViewModeSettings.cpp
+index f728f3d022..0d88ef1539 100644
+--- a/xbmc/video/ViewModeSettings.cpp
++++ b/xbmc/video/ViewModeSettings.cpp
+@@ -29,7 +29,7 @@ static const ViewModeProperties viewModes[] =
+   { 630,   ViewModeNormal },
+   { 631,   ViewModeZoom },
+   { 39008, ViewModeZoom50 },
+-  { 39009, ViewModeZoom110Width },
++  { 39009, ViewModeZoom33 },
+   { 632,   ViewModeStretch4x3 },
+   { 633,   ViewModeWideZoom },
+   { 634,   ViewModeStretch16x9 },
