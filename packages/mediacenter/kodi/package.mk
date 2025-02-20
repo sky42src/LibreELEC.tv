@@ -14,6 +14,14 @@ PKG_DEPENDS_HOST="toolchain"
 PKG_LONGDESC="A free and open source cross-platform media player."
 PKG_BUILD_FLAGS="+speed"
 
+# pretty git version
+GIT_BRANCH="Omega"
+if [[ ${PKG_VERSION} =~ ^[0-9a-f]{7,64} ]]; then
+  GIT_VERSION="${GIT_BRANCH}-${BASH_REMATCH[0]:0:7}"
+else
+  GIT_VERSION="${PKG_VERSION}"
+fi
+
 configure_package() {
   # Single threaded LTO is very slow so rely on Kodi for parallel LTO support
   if [ "${LTO_SUPPORT}" = "yes" ] && ! build_with_debug; then
@@ -237,7 +245,7 @@ configure_package() {
                          -DSWIG_EXECUTABLE=${TOOLCHAIN}/bin/swig \
                          -DPYTHON_EXECUTABLE=${TOOLCHAIN}/bin/${PKG_PYTHON_VERSION} \
                          -DPYTHON_INCLUDE_DIRS=${SYSROOT_PREFIX}/usr/include/${PKG_PYTHON_VERSION} \
-                         -DGIT_VERSION=${PKG_VERSION} \
+                         -DGIT_VERSION=${GIT_VERSION} \
                          -DFFMPEG_PATH=${SYSROOT_PREFIX}/usr \
                          -DENABLE_INTERNAL_FFMPEG=OFF \
                          -DENABLE_INTERNAL_CROSSGUID=OFF \
