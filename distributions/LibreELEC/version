@@ -1,6 +1,6 @@
 # VERSION: set full version, use "devel" for development version
   LIBREELEC_VERSION="12.0.2"
-  BUILDER_VERSION="250407"
+  BUILDER_VERSION="250416"
 
 # OS_VERSION: OS Version
   OS_VERSION="12.0"
