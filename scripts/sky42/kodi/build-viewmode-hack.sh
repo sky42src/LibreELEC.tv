@@ -20,7 +20,7 @@ FHS=${WHERE%/scripts/sky42/kodi}
 if [ $# -gt 0 ]; then
   B42="$@"
 else
-  B42="b 4 5"
+  B42="x 5 4"
 fi
 
 set -x
@@ -31,7 +31,11 @@ cp scripts/sky42/kodi/kodi-10[1-9].42-*.patch packages/mediacenter/kodi/patches/
 sed -i -E 's|(BUILDER_VERSION="[0-9]{6})"$|\1z"|' distributions/LibreELEC/version || exit $?
 
 # b42 is my build wrapper script (in this case for Generic-BT2020, RPi4, RPi5 as they are my main devices)
-for i in  $B42 ; do b42 $i || exit $? ; done
+for i in  $B42 ; do
+  scripts/clean kodi
+  b42 $i || exit $?
+  scripts/clean kodi
+done
 
-git reset --hard
-git clean -fd
+rm packages/mediacenter/kodi/patches//kodi-10[1-9].42-*.patch  || exit $?
+sed -i -E 's|(BUILDER_VERSION="[0-9]{6})z"$|\1"|' distributions/LibreELEC/version || exit $?
